@@ -1,5 +1,7 @@
 \version "2.24.1"
 
+\include "roman_numeral_analysis_tool.ily"
+
 
 
 
@@ -84,9 +86,9 @@ global = {
 
 melody = \relative c'  {   \clef "treble" 
   
-  \partial 2    \sectionLabel \markup { \rounded-box { A } } e4 f   |
+   \repeat unfold 2 { \partial 2   e4 f   |
   
-  \repeat unfold 2 {
+  \sectionLabel \markup { \rounded-box { A } }
 g2 b | %1
   a4 g  e d | %2
   e1~		| %m3
@@ -106,26 +108,26 @@ g2 b | %1
   g2 g 	| %m13
   g4 a2  fis4 | %14
   g1~		| %m15
-  g4 r4 e f | %m16 
+  g4 r4   %m16 
   
     }
     
       \volta 2 {
    \sectionLabel \markup { \rounded-box { C } }
-   c'2 	c 	| %m25
+   c2 	c 	| %m25
   c4 d2 b4 | %26
  bes2 bes	| %m27
 a2 g4 f | %m28
   e2 e 	| %m29
   d4 c'2 b4  | %30
   c1		| %m31
-    | %m32 
-  
+  R1    \bar ".|"  | %m32 
+
     }
     
    }
     
-  }
+  } 
 
 }
   
@@ -133,7 +135,8 @@ a2 g4 f | %m28
 
 
 phrasing = {
-  \partial 2 c2(
+  \startPat
+  \partial 2 c4( c
   c4 c c c | %m1
   c4 c c c | %m2
   c4) c c c | %m3
@@ -145,29 +148,122 @@ phrasing = {
   c4 c c c | %m9
   c4 c c c | %m10
   c4 c c c | %m11
-  c4) c c c | %m12
+  c4) c c( c | %m12
   c4 c c c | %m13
   c4 c c c | %m14
-  c4 c c c | %m15
-  c4 c c c | %m16
+  c4) c c c | %m15
+  c4 c c( c | %m16
   c4 c c c | %m17
   c4 c c c | %m18
-  c4 c c c | %m19
-  c4 c c c | %m20
+  c4) c c c | %m19
+  c4 c( c c | %m20
   c4 c c c | %m21
   c4 c c c | %m22
-  c4 c c c | %m23
-  c4 c c c | %m24
+  c4) c c c | %m23
+  c4 c c( c | %m24
   c4 c c c | %m25
   c4 c c c | %m26
   c4 c c c | %m27
-  c4 c c c | %m28
+  c4) c c( c | %m28
   c4 c c c | %m29
   c4 c c c | %m30
-  c4 c c c | %m31
-  c4 c c c | %m32
+  c4) c c c | %m31
+  c4 c c c | %m32  \bar ".|"
 }
+
+
+
+
+
+
+
+
+harmonicR = {
+  \partial 2 c2 |
+\repeat unfold 11 {c2 c2} 
+c2 c4 c4 % measure 12 harmonic rhythm
+\repeat unfold 19 { c2 c2 }
+  
+}
+
+
+
+
+
+
+
+
+%%% Roman numeral analysis (attached to phrasing voice)
+%%% Usage: \markup \rN { I }  \markup \rN { ii }  \markup \rN { V 7 }
+%%% Secondary functions: \markup \rN { V 7 / ii }
+%%% Qualities: o = dim, h = half-dim, + = aug
+%%% Key indication: \set stanza = \markup \keyIndication { C }
+analysis = \lyricmode {
+  \override LyricText.self-alignment-X = #-0.6
+ \set stanza = \markup \rounded-box \concat{ { \italic  "do" "  : " } }
+  %% A section (mm. 1-8)
+       \markup \rN { I } | %anacrusis
+      \skip 2  \markup \rN { vi }	|
+
+ \markup \rN { ii } \markup \rN { V }   | %m1-2
+ \markup \rN { I }   \markup \rN { vi } \markup \rN { ii } \markup \rN { V }  | %m3-4
+ \markup \rN {I } \markup \rN {ii } \markup \rN {iii }     \markup \rN {vi }    | %m5-6 
+\markup \rN {ii } \skip 2  \markup \rN { V }  \skip 2     | %m7-8 we didn't worry about the F here in the bass as it is implicit in the system of Mehghan
+
+  %% B section (mm. 9-16)
+  \markup \rN {I } \markup\rN  {fiii o  } \markup \rN {ii } \markup \rN {V }     | %m9-10 
+  \markup \rN {vi } \markup  {IIx } % put 
+  \set stanza = \markup \rounded-box { \concat { \italic "sol" " :" } }
+  \markup \rN { I }  \markup \concat { "(" \rN { siv h } ")" } \markup  \rN {V }    | %m11-12: vi(=ii/G) V7/G | I in G ... %% 
+  \markup \rN {I } \markup \rN { fiii o } \markup \rN {ii } \markup \rN {V }     | %m13-14 
+  \markup \rN { v m } \skip 2      | %m15
+  
+    \set stanza = \markup \rounded-box { \concat { \italic "do" " :" } }
+    \markup { V}
+
+ \markup \rN { I } | %anacrusis
+      \skip 2 \markup \rN { vi }	|
+
+  \markup \rN { ii } \markup \rN { V }   | %m1-2
+ \markup \rN { I }   \markup \rN { vi } \markup \rN { ii } \markup \rN { V }  | %m3-4
+ \markup \rN {I } \markup \rN {ii } \markup \rN {iii }     \markup \rN {vi }    | %m5-6 
+\markup \rN {ii } \skip 2  \markup \rN { V }  \skip 2     | %m7-8 we didn't worry about the F here in the bass as it is implicit in the system of Mehghan
+
+
+  %% C section (mm. 25-32)
+  \markup \rN {I } \markup \rN {fiii o } \markup \rN {ii } \markup \rN {V }     | %m25-26 
+
+\markup \rN {v m } \skip 2 \markup \rN {IV } \markup \concat { \rN { fVI } "x" }  | %m27-28 TODO
+  \markup \rN {iii }   \markup{VIx} \markup{ii} \markup{V}     | %m29-30 TODO
+ \markup{I} \skip 2  | %m31-32 TODO
+}
+
+
+%%% Secondary analysis line — modulation to sol (G major) at m11
+%%% Skips 21 half-notes (= pickup + m1–10) then shows ii V I in G
+analysisSol = \lyricmode {
+  \override LyricText.self-alignment-X = #-0.6
+  \skip 2
+  \repeat unfold 17 \skip 2   %% advance to m9
+  \markup {IIx}
+  \skip 2 \skip 2
+  
+  \set stanza = \markup \rounded-box { \concat { \italic "sol" " :" } }
+  \markup \rN { ii }
+  \markup \rN { V }
+  \repeat unfold 4 \skip 2
+  \markup {IIx }
+  \repeat unfold 2 \skip 2
+    \set stanza = \markup \rounded-box { \concat { \italic "do" " :" } }
+    \markup {ii} 
+    \repeat unfold 23 \skip 2   %% advance to m27
+    
+        \set stanza = \markup \rounded-box { \concat { \italic "fa" " :" } }
+    \markup {ii}  \markup {V} \markup{I} \markup{IVx}
  
+    
+}
+
 
 
   
@@ -388,23 +484,35 @@ alternateChords = \chordmode {
           s1 * 4 \break
           s1 * 4 \break
           s1 * 4 \break
-          \repeat unfold 5 { s1 * 4 \break }
+ \repeat unfold 4 { s1 * 4 \break }
+s1 * 4   % bar 29–32, no break
         }
       >>
     }
     
     
       \new RhythmicStaff {
-        
-        \new Voice \with {
-  \omit NoteHead
-  \omit Stem
-  \omit Beam
-  \omit Flag
-} \phrasing
-       
-      
-      }    
+<<
+        \new Voice = "phrasing" \with {
+        %  \omit NoteHead
+    %       \omit Stem
+%           \omit Beam
+%           \omit Flag
+        } \phrasing
+
+        \new Voice = "harmonicR" \with {
+          \omit NoteHead
+          \omit Stem
+          \omit Beam
+          \omit Flag
+        } \harmonicR
+>>
+      }
+      \new Lyrics \lyricsto "harmonicR" { \analysis }
+      \new Lyrics \lyricsto "harmonicR" { \analysisSol }
+  %     \new Lyrics \with {
+%         \override VerticalAxisGroup.nonstaff-relatedstaff-spacing = #'((basic-distance . 6))
+%       } \lyricsto "phrasing" { \analysis }
     
   >>
   
