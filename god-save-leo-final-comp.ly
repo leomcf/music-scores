@@ -1,0 +1,250 @@
+\version "2.24.1"
+\paper {
+  indent = 0
+  ragged-last-bottom = ##f
+  page-count = 1
+  tagline = ##f
+  top-margin = 3\cm
+  bottom-margin = 0\cm
+  % Increased space between systems
+  system-system-spacing.minimum-distance = #25 % Slightly reduced from 30 for testing
+  system-system-spacing.padding = #25
+  system-system-spacing.stretchability = #25
+}
+
+% Global settings
+global = {
+  \key c \major
+  \time 3/4
+}
+
+% Empty staff with NO barlines, but staff lines are visible.
+% Clefs and time signatures are invisible.
+emptyStaffNoBarlines = {
+  \override Staff.StaffSymbol.transparent = ##f % Ensure staff lines are visible
+  \override Staff.Clef.transparent = ##t       % Make clef invisible
+  \override Staff.BarLine.transparent = ##t      % Make barlines invisible
+  \override Staff.BarLine.stencil = ##f        % Ensure no stencil for barlines
+  \override Staff.TimeSignature.transparent = ##t % Make time signature invisible
+  s2.*8 % Eight measures of silence to occupy space
+}
+
+% Level two analysis - Right Hand
+righthandTwo = \relative c' {
+  \override Staff.BarLine.transparent = ##t       % Make barlines invisible
+ % \override Staff.BarLine.stencil = ##f
+  % Override Dots stencil globally for this voice block
+  \override Dots.stencil = ##f
+
+  <<
+    \new Voice \with { \voiceOne
+      % Remove engravers responsible for stems and beams in this voice
+      \remove "Stem_engraver"
+      \remove "Beam_engraver"
+    } {
+      g''4( s2 |
+      s4.-\markup \halign #-.2 \italic {3-prg. }  f8  e4) |
+      f4( s2 |
+      s4.-\markup \halign #-.2 \italic {3-prg. }  e8 d4) |
+
+      % No \stemDown needed as stems are removed
+      %  \override Slur.positions = #'(2.5 . 1.5)
+      \slurDashed e4( f8^\markup { \bold N } \slurSolid  e)( d^\markup { \italic 3-p. }  c) |
+    }
+    \\
+   \new Voice \with { \voiceTwo
+  % Remove engravers responsible for stems and beams in this voice
+  \remove "Stem_engraver"
+  \remove "Beam_engraver"
+} {
+  % Ensure consistent overrides for the second voice
+  \override Dots.stencil = ##f
+    \once \override Slur.positions = #'(3 . 3)
+  e4( s2 |
+    % 1. Tell the text to ignore the slur
+    %\once \override TextScript.avoid-slur = #'inside
+    % 2. Now you can precisely position it.
+    %    A less negative Y-value moves it UP.
+  %  \once \override TextScript.positions = #'(0 . 10)
+    s4. d8 c4) |
+
+  d4( s2 |
+    s4. c8 b4) |
+
+  \slurDashed g( a8 \slurSolid g)( f e) |
+}
+     \\
+    \new Voice \with { \voiceThree
+      % Remove engravers responsible for stems and beams in this voice
+      \remove "Stem_engraver"
+      \remove "Beam_engraver"
+    } {
+      % Ensure consistent overrides for the second voice
+      \override Dots.stencil = ##f
+    %\override Slur.positions = #'(-3 . -3)
+    \slurDashed \slurDown
+    g4( s2 |
+    s2. *3 |
+    g8)
+
+    }
+
+  >>
+
+  % Ensure stems and beams are also omitted for this section if desired
+  % This applies to the default voice outside the << \\ >> structure
+  \override Stem.stencil = ##f
+  \override Beam.stencil = ##f
+  <g c e>4. <f f'>8 <g g'>4 |
+  \omit TupletNumber \tuplet 3/2 {a'8 g f} <g, e'>4 <f b d> |
+  <e g c>4 s2 
+
+  \override Staff.BarLine.transparent = ##f       % Make barlines visible
+   \override Staff.BarLine.stencil = ##t  \bar "|"
+}
+
+% Level two analysis - Left Hand
+lefthandTwo = \relative c {
+  % Override Stem stencil globally for this voice block
+  \override Staff.BarLine.transparent = ##t       % Make barlines invisible
+  \override Staff.BarLine.stencil = ##f
+  \override Stem.stencil = ##f
+  \override Beam.stencil = ##f % Ensure no beams
+
+  c4( e^\markup { \italic arp. } g |
+  c)( c,) s4 |
+  g( b^\markup { \italic arp. } d |
+  g)( g,) s4 |
+  c ( c') s4 |
+  s4. a8 e4 |
+  f8 d g4 g, |
+  c( g c,)   \override Staff.BarLine.transparent = ##f       % Make barlines visible
+  \override Staff.BarLine.stencil = ##t  \bar "|"
+}
+
+% Piano music at the bottom - Right Hand
+righthand = \relative c'' {
+  <g e' g>4 <g e' g> <g e' g> | % Replaced q with explicit chord
+  <g e' g>4. <g d' f>8 <g c e>4 |
+  <g d' f>4 <g d' f> <g d' f> | % Replaced q
+  <g d' f>4. <g c e>8 <g b d>4 |
+  <g c e>4 <a f'>8 <g e'> <f d'> <e c'> |
+  <g c e>4. <f c' f>8 <g c g'>4 |
+  \tuplet 3/2 {a'8 g f} <g, c e>4 <f b d> |
+  <e g c>4 r r \bar "|."
+}
+
+% Piano music at the bottom - Left Hand
+lefthand = \relative c {
+  c4 e g |
+  c c, r4 |
+  g b d |
+  g g, r4 |
+  c c' c |
+  c4. a8 e4 |
+  f8 d g4 g, |
+  c g c, \bar "|."
+}
+
+% Score structure
+\score {
+  <<
+    % Empty staves group
+    \new StaffGroup \with {
+      \override SpanBar.transparent = ##t
+      \override SpanBar.stencil = ##f
+    } <<
+      \new PianoStaff \with {
+        \override SpanBar.transparent = ##t
+        \override SpanBar.stencil = ##f
+        \override StaffGrouper.staff-staff-spacing.basic-distance = #4
+        \override StaffGrouper.staff-staff-spacing.minimum-distance = #3
+        \override StaffGrouper.staff-staff-spacing.padding = #1
+        \override TimeSignature.stencil = ##f
+      } <<
+        \new Staff = "empty1" \emptyStaffNoBarlines
+        \new Staff = "empty2" { \clef bass \emptyStaffNoBarlines }
+      >>
+
+      % Invisible staff for vertical space
+      <<
+        \new Staff \with {
+          \remove Staff_symbol_engraver
+          \override SpanBar.transparent = ##t
+          \override Staff.BarLine.stencil = ##f
+          \override SpanBar.stencil = ##f
+          \override Staff.transparent = ##t % Make the entire staff invisible for spacing
+          \override TimeSignature.stencil = ##f
+          \override Clef.stencil = ##f
+        } { s2.*8 }
+      >>
+
+      \new PianoStaff \with {
+        \override StaffGrouper.staff-staff-spacing.basic-distance = #4
+        \override StaffGrouper.staff-staff-spacing.minimum-distance = #3
+        \override StaffGrouper.staff-staff-spacing.padding = #1
+        \override TimeSignature.stencil = ##f
+      } <<
+        \new Staff = "empty3" \emptyStaffNoBarlines
+        \new Staff = "empty4" { \clef bass \emptyStaffNoBarlines }
+      >>
+
+      % Another invisible staff for vertical space
+      <<
+        \new Staff \with {
+          \remove Staff_symbol_engraver
+          \override SpanBar.transparent = ##t
+          \override Staff.BarLine.stencil = ##f
+          \override SpanBar.stencil = ##f
+          \override Staff.transparent = ##t % Make the entire staff invisible for spacing
+          \override TimeSignature.stencil = ##f
+          \override Clef.stencil = ##f
+        } { s2.*8 }
+      >>
+
+      \new PianoStaff \with {
+        \override StaffGrouper.staff-staff-spacing.basic-distance = #4
+        \override StaffGrouper.staff-staff-spacing.minimum-distance = #3
+        \override StaffGrouper.staff-staff-spacing.padding = #1
+        \override TimeSignature.stencil = ##f
+      } <<
+        \new Staff = "level2" {
+          \global
+          \righthandTwo 
+        }
+        \new Staff = "level2b" {
+          \global
+          \clef bass
+          \lefthandTwo
+        }  
+      >>
+
+    >>
+
+    % The piano at the bottom with actual music
+    \new PianoStaff \with {
+      \override StaffGrouper.staff-staff-spacing.basic-distance = #6
+      \override StaffGrouper.staff-staff-spacing.minimum-distance = #5
+      \override StaffGrouper.staff-staff-spacing.padding = #1
+    } <<
+      \new Staff = "right" {
+        \global
+        \righthand
+      }
+      \new Staff = "left" {
+        \global
+        \clef bass
+        \lefthand
+      }
+    >>
+  >>
+
+  \layout {
+    \context {
+      \Score
+      \override SpacingSpanner.base-shortest-duration = #(ly:make-moment 1/8)
+      \override NonMusicalPaperColumn.line-break-permission = ##f
+      \override NonMusicalPaperColumn.page-break-permission = ##f
+    }
+  }
+}

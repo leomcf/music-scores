@@ -1,0 +1,400 @@
+\version "2.24.1"
+
+
+
+
+\header {
+  title = \markup {"Blues en" \italic"si" "bémol"}
+  instrument = "étapes 1 et 2a "
+  composer = \markup{\column{"Performance de Chuck Rainey" "(basse électrique)"}}
+  copyright = "transcription de Leo McFadden "
+  %\markup { "du « playalong »" \italic "Nothin' But the Blues"}
+  
+}
+
+% Toggle variables for different analysis layers 
+showAnalysisOne = ##t   % First layer: notes against basic blues
+showAnalysisTwo = ##f    % Second layer: notes against alternate changes
+
+% First layer: blue circles   (chromatic approach notes against basic blues)
+circleNote = 
+#(define-music-function (note) (ly:music?)
+  (if showAnalysisOne
+      #{
+        \once \override NoteHead.color = #black
+        \once \override NoteHead.stencil = 
+        #(lambda (grob)
+          (let* ((stil (ly:note-head::print grob)))
+            (ly:stencil-add
+              stil
+              (grob-interpret-markup grob
+                (markup
+                  #:with-color blue
+                  #:translate (cons 0.7 0.0)
+                  #:draw-circle 1.0 0.2 #f)))))
+        #note
+      #}
+      note))
+
+% First layer: red circles (notes that don't fit basic blues)
+redCircle = {
+  #(if showAnalysisOne
+     #{
+       \once \override NoteHead.layer = #-1
+       \once \override NoteHead.stencil = #(lambda (grob)
+         (let* ((stil (ly:note-head::print grob)))
+           (ly:stencil-add
+             stil
+             (grob-interpret-markup grob
+               (markup
+                 #:with-color red
+                 #:translate (cons 0.7 0.0)
+                 #:draw-circle 1.0 0.2 #f)))))
+     #}
+     #{ #})
+}
+
+% Second layer: orange circles (notes that still don't fit alternate changes)
+% Second layer: blue circles (chromatic approach notes against alternate changes)
+blueTwo = 
+#(define-music-function (note) (ly:music?)
+  (if showAnalysisTwo
+      #{
+        \once \override NoteHead.color = #black
+        \once \override NoteHead.stencil = 
+        #(lambda (grob)
+          (let* ((stil (ly:note-head::print grob)))
+            (ly:stencil-add
+              stil
+              (grob-interpret-markup grob
+                (markup
+                  #:with-color blue
+                  #:translate (cons 0.7 0.0)
+                  #:draw-circle 1.0 0.2 #f)))))
+        #note
+      #}
+      note))
+
+
+% Red asterisk above measure (for analysis layer one)
+asteriskOne = 
+#(define-music-function () ()
+  (if showAnalysisOne
+      #{
+        ^\markup { \with-color #red \fontsize #6 "*" }
+      #}
+      #{ #}))
+
+% Second layer: red circles (notes that don't fit alternate changes)
+redTwo = {
+  #(if showAnalysisTwo
+     #{
+       \once \override NoteHead.layer = #-1
+       \once \override NoteHead.stencil = #(lambda (grob)
+         (let* ((stil (ly:note-head::print grob)))
+           (ly:stencil-add
+             stil
+             (grob-interpret-markup grob
+               (markup
+                 #:with-color red
+                 #:translate (cons 0.7 0.0)
+                 #:draw-circle 1.0 0.2 #f)))))
+     #}
+     #{ #})
+}
+
+
+antic = {
+  #(if showAnalysisTwo
+     #{
+       \once \override NoteHead.layer = #-1
+       \once \override NoteHead.stencil = #(lambda (grob)
+         (let* ((stil (ly:note-head::print grob)))
+           (ly:stencil-add
+             stil
+             (grob-interpret-markup grob
+               (markup
+                 #:with-color green
+                 #:translate (cons 0.7 0.0)
+                 #:draw-circle 1.0 0.2 #f)))))
+     #}
+     #{ #})
+}
+
+
+
+
+% Second layer: orange noteheads (for alternate changes analysis)
+orange = {
+  #(if showAnalysisTwo
+     #{
+       \once \override NoteHead.color = #(x11-color 'orange)
+     #}
+     #{ #})
+}
+
+
+% Conditional parentheses for analysis layer one
+parenOne = 
+#(define-music-function (note) (ly:music?)
+  (if showAnalysisOne
+      #{ \parenthesize #note #}
+      note))
+
+% Conditional parentheses for analysis layer two
+parenTwo = 
+#(define-music-function (note) (ly:music?)
+  (if showAnalysisTwo
+      #{ \parenthesize #note #}
+      note))
+
+% Toggle variable for showing/hiding analysis circles
+showAnalysisCircles = ##t  % Set to ##t to show circles, ##f to hide them
+
+% % Revised redCircle function
+% redCircle = {
+%   #(if showAnalysisCircles
+%      #{
+%       % \once \override NoteHead.color = #red
+%        \once \override NoteHead.layer = #-1
+%        \once \override NoteHead.stencil = #(lambda (grob)
+%          (let* ((stil (ly:note-head::print grob))
+%                 (lg (ly:grob-property grob 'duration-log))
+%                 (stem (ly:grob-object grob 'stem))
+%                 (is-whole? (= lg 0))
+%                 (stem-dir (if stem 
+%                              (ly:grob-property stem 'direction) 
+%                              0)))
+%            (ly:stencil-add
+%              stil
+%              (grob-interpret-markup grob
+%                (markup
+%                  #:with-color red
+%                  #:translate (cons 0.7 0.0)
+%                  #:draw-circle 1.0 0.2 #f)))))
+%      #}
+%      #{ #})
+% }
+% 
+% % Revised circleNote function
+% circleNote = 
+% #(define-music-function (note) (ly:music?)
+%   (if showAnalysisCircles
+%       #{
+%         \once \override NoteHead.color = #black
+%         \once \override NoteHead.stencil = 
+%         #(lambda (grob)
+%           (let* ((stil (ly:note-head::print grob)))
+%             (ly:stencil-add
+%               stil
+%               (grob-interpret-markup grob
+%                 (markup
+%                   #:with-color blue
+%                      #:translate (cons 0.7 0.0)
+%                  #:draw-circle 1.0 0.2 #f)))))
+%         #note
+%       #}
+%       note))
+
+
+
+
+
+
+
+
+
+global = {
+  \tempo \markup {
+    "Medium Swing"
+    \hspace #0.4
+    \rhythm { 8[ 8] } = \rhythm { \tuplet 3/2 { 4 8 } }
+  } 
+  \key bes \major
+  \time 4/4
+}
+
+
+  
+
+
+  electricBass =   \relative c { \global \clef "bass" \partial 4 r8 \circleNote a8
+  bes4 \circleNote \blueTwo b \circleNote \blueTwo c d | 
+  \redCircle ees bes' \redCircle g8 \asteriskOne  \orange \parenthesize d \tuplet 3/2 {\redCircle  \blueTwo e8-.     \orange d \antic f } |
+  bes,8 \redCircle \orange \parenthesize e,  \circleNote \blueTwo g4  aes \circleNote \blueTwo a | 
+  f8 \redCircle c' \redCircle \blueTwo ces4\asteriskOne bes \redCircle \blueTwo fes' |
+  es8 \circleNote \orange \parenthesize a, g4 \circleNote \blueTwo gis \circleNote \blueTwo a | 
+  bes8 \circleNote \orange \parenthesize d ees4 g8 g \blueTwo \circleNote a4 | 
+  bes8 \parenTwo d, ( f4) d  bes8 \circleNote \blueTwo cis | 
+  d4 \redCircle fis \redCircle g\asteriskOne \tuplet 3/2 { \redCircle b8 \redCircle g \redCircle \blueTwo des } |
+  c4 \redCircle  \orange e, \redCircle g\asteriskOne c |
+   \redCircle f, \redCircle c' \redCircle f\asteriskOne  ees8 \circleNote c |
+   d4   aes \redCircle g\asteriskOne \redCircle \blueTwo des' |
+   c8 \redCircle g' \redCircle \blueTwo ges  \redCircle e\asteriskOne f \redCircle \redTwo des'^\markup { \column { "ou" \italic "ré bécarre" } } \glissando f \circleNote \blueTwo ces |
+   bes4 s2. |
+
+
+    
+    
+    
+  }
+
+
+
+  electricBassTwo =   \relative c { \global \clef "bass" \partial 4 r8 \circleNote a8
+  bes4 \circleNote b \circleNote c d | 
+  \redCircle ees bes' \redCircle g8  \redCircle ees \tuplet 3/2 {\redCircle  e8-.   \parenthesize \once \override NoteHead.color = #(x11-color 'orange) d f } |
+  bes,8 \once \override NoteHead.color = #(x11-color 'orange) \parenthesize e,  \circleNote g4 \circleNote gis \circleNote a | 
+  f8 c' \circleNote ces4 bes \redCircle fes' |
+  es8 \once \override NoteHead.color = #(x11-color 'orange) \parenthesize a, g4 \circleNote gis \circleNote a | 
+  bes8 \once \override NoteHead.color = #(x11-color 'orange) \parenthesize d ees4 g8 g \circleNote a4 | 
+  bes8 \parenthesize d, ( f4) d  bes8 \circleNote cis | 
+  d4 fis g \tuplet 3/2 {bes8 g \circleNote des } |
+  c4 \once \override NoteHead.color = #(x11-color 'orange) \parenthesize e, g c |
+   f, c' f  ees8 des |
+   d!4 aes g des' |
+   c8 g' ges e f des' \glissando f c |
+   bes4 s2. |
+
+
+    
+    
+    
+  }
+
+
+
+
+
+basicBlues = \chordmode {
+  \partial 4 s4 |
+  bes1:7  |
+ q |
+ q |
+  q|
+  ees1:7 |
+  q  |
+  bes:7 |
+  q |
+  f:7 |
+  ees:7 |
+  bes:7 |
+  f:7 |
+  bes:7 |
+}
+
+
+  
+
+  
+  
+
+  
+  \paper {
+  system-system-spacing.basic-distance = 20  % Increased spacing between systems
+  score-system-spacing.basic-distance = 25   % Space between title/header and first system
+  markup-system-spacing.basic-distance = 18  % Space between text markups and systems
+}
+
+alternateBlues = \chordmode {  
+  \partial 4 s4 |
+  bes1:7 |  %m1
+  ees:7  |  %2
+  bes:7 | %m3
+  f2:m7 bes:7 | %m4
+  ees1:7  | %m5
+    ees1:7  | %m6
+    bes:7 | %m7
+    d2:7  g:7 | %m8
+    c1:7 |  %9
+    f1:7 	| %m10
+    d2:m7 g2:7 | %m11
+    c:7 f:7 | %m12 
+   bes1:7 | %m13
+  
+  
+  
+
+
+
+
+} 
+
+
+
+
+%%altered chords of the last two measures
+%   d2:11+ g2:11+ | %m11
+   % c:11+ f:13-
+
+
+
+
+
+
+
+\score {
+ 
+ 
+ 
+ 
+ 
+<<
+    
+
+  %  test chord names for corrected chords (need spectial markup) 
+%      \new ChordNames { 
+%              \set chordChanges = ##t
+%  \alternateBlues
+%    } 
+    
+       % Alternate chord names (only show with layer two)
+  #(if showAnalysisTwo
+    #{
+      \new ChordNames { 
+        \alternateBlues
+      } 
+    #}
+    #{ #})
+    
+    
+    % Regular chordnames
+    \new ChordNames {
+  \set chordChanges = ##t
+\basicBlues
+      % Any additional sections
+    }
+    
+
+              
+     
+    % Bass part with line breaks properly nested
+    \new Staff = "bass" { \relative {
+
+  }
+      <<
+        % Voice for line breaks (invisible)
+        \new Voice {
+          \voiceTwo  % Lower voice number to make sure it's underneath
+        \partial 4 s4
+        s1 * 4 \break
+          s1 * 4 \break
+          s1 * 4 \break
+         
+        }
+        
+        % Main bass voice
+        \new Voice {
+    % Higher voice number to ensure it's on top
+          \electricBass
+       
+        }
+      >>
+    }
+  >>
+  
+  \layout {
+  indent = #0
+  }
+  \midi {}
+}

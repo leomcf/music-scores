@@ -1,0 +1,455 @@
+\version "2.24.1"
+
+
+
+
+
+\header {
+  title = "Time after Time"
+  instrument = \markup { "de l'album" \italic "Chet Baker Sings"}
+  composer = "Jule Syne"
+  arranger = "Sammy Cahn"
+  copyright = "Performance de Carson Smith (contrebasse) "
+  
+  
+}
+
+
+
+
+
+
+% Toggle variable for showing/hiding analysis circles
+showAnalysisCircles = ##t  % Set to ##t to show circles, ##f to hide them
+
+% Revised redCircle function
+redCircle = {
+  #(if showAnalysisCircles
+     #{
+      % \once \override NoteHead.color = #red
+       \once \override NoteHead.layer = #-1
+       \once \override NoteHead.stencil = #(lambda (grob)
+         (let* ((stil (ly:note-head::print grob))
+                (lg (ly:grob-property grob 'duration-log))
+                (stem (ly:grob-object grob 'stem))
+                (is-whole? (= lg 0))
+                (stem-dir (if stem 
+                             (ly:grob-property stem 'direction) 
+                             0)))
+           (ly:stencil-add
+             stil
+             (grob-interpret-markup grob
+               (markup
+                 #:with-color red
+                 #:translate (cons 0.7 0.0)
+                 #:draw-circle 1.0 0.2 #f)))))
+     #}
+     #{ #})
+}
+
+% Revised circleNote function
+circleNote = 
+#(define-music-function (note) (ly:music?)
+  (if showAnalysisCircles
+      #{
+        \once \override NoteHead.color = #black
+        \once \override NoteHead.stencil = 
+        #(lambda (grob)
+          (let* ((stil (ly:note-head::print grob)))
+            (ly:stencil-add
+              stil
+              (grob-interpret-markup grob
+                (markup
+                  #:with-color blue
+                     #:translate (cons 0.7 0.0)
+                 #:draw-circle 1.0 0.2 #f)))))
+        #note
+      #}
+      note))
+
+
+
+
+
+
+
+
+
+
+global = {
+
+  \key c \major
+  \time 4/4
+}
+
+
+
+
+
+
+pianoRH = \relative c'' {   \global \clef "treble" 
+  
+  \partial 4 \tuplet 3/2 {r8 c4  } |
+  g'2 r8 c,  \tuplet 3/2 {g'8 f f~  } |
+  
+  f2 r8 c   \tuplet 3/2  {f8 ees ees~  } | 
+  ees2 r8 c ees f  | 
+  g4.  8 <  a, c e>2  |
+  
+  
+           }
+  
+  
+
+
+pianoLH =  \relative c { \global \clef "bass"
+  
+  \partial 4 r4 | 
+  
+  r8 <aes' c ees g>8~ q2  r4 |
+  r8 < aes c d  f g >8~ q2 r4 |
+    r8 < f c'  f g aes >8~ q2 r4 |
+   < b d e g >2  <a c f >2 |   
+  
+  
+}
+  
+  
+  
+  contrebasseIntro = \relative c' { \clef "treble_8" \partial 4 s4
+   r8 aes~ aes2 r4 |
+      r8 g~ g2 r4 | 
+     r8 f~ f2 r4 | \clef "bass_8"
+e2 d4 g, \bar "||"| \break
+
+    
+    
+    
+  }
+  
+
+contrebasse = { 
+       \set Score.rehearsalMarkFormatter = #format-mark-box-alphabet
+  
+  \global  \clef "bass_8"   \relative c
+ { 
+  \sectionLabel \markup { \rounded-box { A } }
+c,2 a | 
+d g | 
+c,  e |
+d g | 
+c, e4 g |
+a4. e8  a,2 | 
+f' f | 
+b,  e | 
+  \sectionLabel \markup { \rounded-box { B } }
+a, g | 
+fis b | 
+e  b | 
+    bes a | 
+d a'4 \circleNote g  | 
+\redCircle f e \redCircle d2 | 
+\redCircle aes'  \redCircle aes | 
+g \circleNote e4 d |  
+
+  \sectionLabel \markup { \rounded-box { A' } }
+c2 a | 
+d g |
+c, \redCircle b4 e | 
+d2 g | 
+c c | 
+g4 bes c c, | 
+f2 c | 
+f \redCircle bes, | 
+  \sectionLabel \markup { \rounded-box { C } }
+  c g' | 
+  fis f | 
+  e a, | 
+  d \redCircle b |
+  c a | 
+  d g | 
+  c,  \redCircle aes'4 \redCircle ees |  %%% up to here 20250405
+  \redCircle des2  d4 g |  
+   \sectionLabel \markup { \rounded-box { A } }
+  c, d e a |
+  d, f g d' | 
+  c   \circleNote  b  a  g | 
+  d f g \circleNote e  |
+  c g' e f |
+  a g e c 
+  f, f  \redCircle c' f |
+  b, \redCircle f e gis | 
+  \sectionLabel \markup{\rounded-box{B}}
+  a c e g |  
+  fis fis, b b' |
+  e, \circleNote fis  g b | 
+  bes bes a a, |
+  d e f g  | 
+  \redCircle a  g \redCircle f d | 
+  \redCircle aes c \redCircle ees \redCircle aes |
+  g f \circleNote e d | \break 
+    \sectionLabel \markup { \rounded-box { A' } }
+  c2 a | 
+  d g  | 
+  c, e4. a8 |
+d,2 g | 
+c, g'4 \circleNote  d' |
+\circleNote c bes \circleNote a g | 
+f2 c | 
+f, \redCircle bes | 
+\sectionLabel \markup { \rounded-box { C } }
+g g'4~ \tuplet 3/2  {g8 \circleNote a g } |
+fis2 f | 
+e a | 
+d,4 e fis \circleNote b, | 
+c2 a | 
+d g | 
+c,1~  |
+c1 \bar "|."
+
+
+
+}
+}
+
+
+
+
+% Fixed chord sections
+intro = \chordmode {
+  
+  \partial 4 r4 
+  aes1:maj7 | % check this intro 
+  aes:maj13/g |
+ f:m9 		|
+   e2:m d4:m g:7 |
+}
+
+aSection = \chordmode {
+  c2 a:m7 |
+  d:m7 g:7 |
+  c a:m7 |
+  d:m7 g:9 |
+  c1:maj7 |
+  a:m7  |
+  b:m7.5- |
+  e:7 |
+}
+
+bSection = \chordmode {
+  a2:m a:m7/g |
+  fis:m7.5- b:7 |
+  e1:m |
+  a:7.9- |
+  d:m7 |
+  e2:m7.5- a:7 |
+  d1:9 |
+  g:9sus4 |}
+
+aoneSection = \chordmode { 
+  
+    c2 a:m7 |
+  d:m7 g4:9sus4 g:9 |
+  c2 a:m7 |
+  d:m7 g4:9sus4 g |
+  c1:maj7 |
+  g2:m7 c:7  |
+  f1:maj7  |
+  f2:m7 f:m6  |
+  
+  
+}
+cSection = \chordmode {
+  c1:6/g |
+  fis2:m7.5-  f:m6 |
+  e:m7 a:m7 |
+  d1:9sus4 |
+  c2:9 a:m7 |
+  d:m7 g:7.9- |
+  c1:maj7  | 
+   g:7 | 
+  
+  
+  
+}
+  
+  
+  coneSection = \chordmode {
+  c1:6/g |
+  fis2:m7.5-  f:m6 |
+  e:m7 a:m7 |
+  d1:9sus4 |
+  c2:9 a:m7 |
+  d:m7 g:7.9- |
+  c1:maj7  | 
+   s1 | 
+  
+  
+  
+}
+  
+  
+  
+  
+  \paper {
+  system-system-spacing.basic-distance = 20  % Increased spacing between systems
+  score-system-spacing.basic-distance = 25   % Space between title/header and first system
+  markup-system-spacing.basic-distance = 18  % Space between text markups and systems
+}
+%   {
+%   bes:maj7 a:m7 |
+%   d:m7 a:m7 |
+%   f:maj7 d:m7 |
+%   aes:maj7 aes:maj7 |
+%   g:7 e:m7 |
+% }
+
+% intro = \relative {
+% 
+%   \chordmode {
+%   s1 | 
+%   s1 |
+%   }
+% }
+% 
+% aSection = \relative {
+%   
+%   \chordmode {
+%   {c2 a:m7 |
+%   d:m7 g:m9|
+%   c
+%   }
+% }
+alternate = \chordmode {  s1*7 |  b2:m7.5-  e2:7.9-|
+                        s1 *2 | e1:m9.7+ | e2:m7.5- a2:7.5- | % m14
+                        d1:m7 | d1:m7 |  
+                        d1:m7.5- | g:7.9- |
+                        
+                        s1 | % 19
+                        d2:m7  g2:7.9- | 
+                        c   e:m |
+                        s1 *4 | 
+                        f2:m6 bes:9 | 
+                        s1*6 |
+                        c2:maj7 aes:maj7 | %33
+                        des:maj7 g:7.9- | 
+                        s1*7 | 
+                        b2:m7.5- e:7 | 
+                        s1 *2 | 
+                       s1 |
+                        e2:m7.5- a:7.9-
+                        d1:m7 | 
+                        d1:m7
+                        aes:7 | 
+                        g:7.9- |
+                        s1 |
+                        d2:m7 g:7.9- |
+                       c:maj7 e:m | 
+                       d2:m7  g:7.9- | 
+                       s1  | 
+                       c2:7 c2:7.9- | 
+                       s1 |
+                       f2:m7 bes:9-  | 
+                       s1 *3 | 
+                       d2:9  b:7.9- | 
+                       
+
+
+
+
+} 
+
+
+
+
+
+
+
+
+First score block for just the piano right hand
+\score {
+  
+  <<
+\new ChordNames {\intro}
+  \new PianoStaff \with { instrumentName = "Piano" } <<
+    \new Staff = "upper"       \pianoRH
+    
+   
+    \new Staff = "lower"        
+      \pianoLH
+          
+  
+  
+  
+    
+  >>
+\new Staff = "bass" \with { instrumentName = "basse" }  \contrebasseIntro
+
+  >>
+  
+
+  \layout {}
+  % No \midi {} here to avoid duplicate MIDI files
+}
+
+
+%\markup { \vspace #2 }
+\markup { \bold \large "Contrebasse - performance de Carson Smith" }
+%\markup { \vspace #1 }
+
+
+\score {
+ 
+ 
+ 
+ 
+ 
+<<
+    
+    
+    %%test chord names for corrected chords (need spectial markup) 
+%      \new ChordNames { 
+%  \alternate
+%    } 
+    
+    % Regular chordnames
+    \new ChordNames {
+  
+      \aSection
+      \bSection
+      \aoneSection
+      \cSection
+      \aSection
+      \bSection
+      \aoneSection
+      \coneSection
+      % Any additional sections
+    }
+    
+
+              
+     
+    % Bass part with line breaks properly nested
+    \new Staff = "bass" {
+      <<
+        % Voice for line breaks (invisible)
+        \new Voice {
+          \voiceTwo  % Lower voice number to make sure it's underneath
+          s1 * 8 \break
+          s1 * 8 \break
+          s1 * 8 \break
+          \repeat unfold 5 {s1 * 8 \break}
+        }
+        
+        % Main bass voice
+        \new Voice {
+    % Higher voice number to ensure it's on top
+          \contrebasse 
+        }
+      >>
+    }
+  >>
+  
+  \layout {}
+  \midi {}
+}

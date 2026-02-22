@@ -1,0 +1,414 @@
+\version "2.24.1"
+
+
+
+
+
+
+\header {
+  title = "I Could Write A Book"
+  composer = "Richard Rodgers"
+  arranger = "Lorenz  Hart"
+  copyright = "© 1940"
+
+  
+}
+
+% Toggle variables for different analysis layers 
+showAnalysisOne = ##t  % First layer: notes against basic blues
+showAnalysisTwo = ##t   % Second layer: notes against alternate changes
+
+
+
+% First layer: red circles (notes that don't seem to belong to the written changes)
+redCircle = {
+  #(if showAnalysisOne
+     #{
+       \once \override NoteHead.layer = #-1
+       \once \override NoteHead.stencil = #(lambda (grob)
+         (let* ((stil (ly:note-head::print grob)))
+           (ly:stencil-add
+             stil
+             (grob-interpret-markup grob
+               (markup
+                 #:with-color red
+                 #:translate (cons 0.7 0.0)
+                 #:draw-circle 1.0 0.2 #f)))))
+     #}
+     #{ #})
+}
+
+
+
+% Red asterisk above measure (for analysis layer one)
+asteriskOne = 
+#(define-music-function () ()
+  (if showAnalysisOne
+      #{
+        ^\markup { \with-color #red \fontsize #6 "*" }
+      #}
+      #{ #}))
+
+
+startPat = {
+  \improvisationOn
+  \omit Stem
+}
+stopPat = {
+  \improvisationOff
+  \undo \omit Stem
+}
+
+
+
+
+
+
+
+% Toggle variable for showing/hiding analysis circles
+%showAnalysisCircles = ##t  % Set to ##t to show circles, ##f to hide them
+
+
+
+
+global = {
+
+  \key c \major
+  \time 4/4
+}
+
+
+
+
+
+
+melody = \relative c'  {   \clef "treble" 
+  
+  \partial 2    \sectionLabel \markup { \rounded-box { A } } e4 f   |
+  
+  \repeat unfold 2 {
+g2 b | %1
+  a4 g  e d | %2
+  e1~		| %m3
+  e4 g e d | %4
+  e g e d |  %m5
+  e c'2 e,4 | %m6
+  g1~ 	| %m7
+  g2	 a4 b  | %m8
+ \set Score.voltaSpannerDuration = #(ly:make-moment 1/1)
+   \alternative {
+  \volta 1 { 
+  
+   \sectionLabel \markup { \rounded-box { B } }c2 	c 	| %m9
+  c4 d2 b4 | %10
+  a2	a 	| %m11
+  g e4 fis	| %m12
+  g2 g 	| %m13
+  g4 a2  fis4 | %14
+  g1~		| %m15
+  g4 r4 e f | %m16 
+  
+    }
+    
+      \volta 2 {
+   \sectionLabel \markup { \rounded-box { C } }
+   c'2 	c 	| %m25
+  c4 d2 b4 | %26
+ bes2 bes	| %m27
+a2 g4 f | %m28
+  e2 e 	| %m29
+  d4 c'2 b4  | %30
+  c1		| %m31
+    | %m32 
+  
+    }
+    
+   }
+    
+  }
+
+}
+  
+ 
+
+
+phrasing = {
+  \partial 2 c2(
+  c4 c c c | %m1
+  c4 c c c | %m2
+  c4) c c c | %m3
+  c4 c( c c | %m4
+  c4 c c c | %m5
+  c4 c c c | %m6
+  c4) c c c | %m7
+  c4 c c( c | %m8
+  c4 c c c | %m9
+  c4 c c c | %m10
+  c4 c c c | %m11
+  c4) c c c | %m12
+  c4 c c c | %m13
+  c4 c c c | %m14
+  c4 c c c | %m15
+  c4 c c c | %m16
+  c4 c c c | %m17
+  c4 c c c | %m18
+  c4 c c c | %m19
+  c4 c c c | %m20
+  c4 c c c | %m21
+  c4 c c c | %m22
+  c4 c c c | %m23
+  c4 c c c | %m24
+  c4 c c c | %m25
+  c4 c c c | %m26
+  c4 c c c | %m27
+  c4 c c c | %m28
+  c4 c c c | %m29
+  c4 c c c | %m30
+  c4 c c c | %m31
+  c4 c c c | %m32
+}
+ 
+
+
+  
+  
+
+    
+    
+    
+  
+
+%  
+%  
+%  
+%  
+%   \global  \clef "bass_8"   \relative c
+%  {   
+%   \sectionLabel \markup { \rounded-box { A } }
+%   \partial 4 r4
+%   R1*7 |
+% 
+% 
+% r2. g,4 | 
+%   \sectionLabel \markup { \rounded-box { A' } }
+% c2 a | 
+% d2. g,4 |
+% \redCircle e2 a |
+% \redCircle fis \redCircle f |
+% e a |
+% d2 d4  g,4~ | 
+%  \redCircle g4\redCircle g2\redCircle g4  | 
+% c2 \redCircle b    | 
+% 
+% 
+%  
+%   \sectionLabel \markup{\rounded-box{B}}
+%   e,2 \redCircle cis' |  
+%   fis, b |
+%   e, \redCircle g | 
+%   \redCircle fis4~ \tuplet 3/2 { fis8 \redCircle fis' c } b2 | %note there is an error here in the real book chart. 
+%    e,1  | 
+%    \redCircle f2\redCircle fis4\redCircle b | 
+%    e,2  a4~ \tuplet 3/2 {a8 cis e }
+%    d2 g, |
+%    
+%     \sectionLabel \markup { \rounded-box { A' } }
+% c2 a | 
+% d2 g,4 f |
+% e2 a |
+% fis f |
+% e a |
+% d2 d4  g,4~ | 
+%  g4 g2 g4~  | 
+% g g8^\markup{binaire} c d4 g  \bar "|."    | 
+%  
+% 
+% }
+% 
+%  >>
+% }
+% 
+% 
+% 
+% 
+% % Fixed chord sections
+% intro = \chordmode {
+%   
+%   \partial 4 r4 
+%   aes1:maj7 | % check this intro 
+%   aes:maj13/g |
+%  f:m9 		|
+%    e2:m d4:m g:7 |
+% }
+% 
+% aSection = \chordmode {
+%  \partial 4 r4
+%  c2:maj7 a:m7 |
+%   d:m7 g:7 |
+%   c:maj7 a:m7 |
+%   d:m7 g:7 |
+%   e:m7 a:m7 |
+%   d:m7 e:7  |
+%   a:m7 d:7 |
+%   d:m7 g:7 |
+% }
+% 
+% 
+% aoneSection = \chordmode { 
+%  c2:maj7 a:m7 |
+%   d:m7 g:7 |
+%   c:maj7 a:m7 |
+%   d:7 ees:dim7 |
+%   e:m7 a:m7 |
+%   d:m7 g:7  |
+%   c1:maj7 |
+%   q |
+%   
+%   
+% }
+% 
+% 
+% 
+% 
+% bSection = \chordmode {
+%   e:m7 |
+%   fis2:m7.5- b:7.9- |
+%   e1:m7 |
+%   f2:m7.5- b:7 | % Hobgood plays B7b13 -> Em11 here (the g leads to the A) 
+%     e1:m7 |
+%   fis2:m7.5- b:7 |
+%   e2:m7.5- a:7.9- |
+%   d2:7   g:7 |
+% }
+% 
+% 
+% cSection = \chordmode {
+%   c1:6/g |
+%   fis2:m7.5-  f:m6 |
+%   e:m7 a:m7 |
+%   d1:9sus4 |
+%   c2:9 a:m7 |
+%   d:m7 g:7.9- |
+%   c1:maj7  | 
+%    g:7 | 
+%   
+%   
+%   
+% }
+%   
+%   
+%   coneSection = \chordmode {
+%   c1:6/g |
+%   fis2:m7.5-  f:m6 |
+%   e:m7 a:m7 |
+%   d1:9sus4 |
+%   c2:9 a:m7 |
+%   d:m7 g:7.9- |
+%   c1:maj7  | 
+%    s1 | 
+%   
+%   
+%   
+% }
+%   
+%   
+  
+  
+  \paper {
+    indent = 0
+  system-system-spacing.basic-distance = 20  % Increased spacing between systems
+  score-system-spacing.basic-distance = 25   % Space between title/header and first system
+  markup-system-spacing.basic-distance = 18  % Space between text markups and systems
+}
+%   {
+%   bes:maj7 a:m7 |
+%   d:m7 a:m7 |
+%   f:maj7 d:m7 |
+%   aes:maj7 aes:maj7 |
+%   g:7 e:m7 |
+% }
+
+% intro = \relative {
+% 
+%   \chordmode {
+%   s1 | 
+%   s1 |
+%   }
+% }
+% 
+% aSection = \relative {
+%   
+%   \chordmode {
+%   {c2 a:m7 |
+%   d:m7 g:m9|
+%   c
+%   }
+% }
+alternateChords = \chordmode {  
+  
+    
+          %\voiceTwo  % Lower voice number to make sure it's underneath
+          \partial 4 s4
+          s1 * 4 
+          s1 * 4 
+          s1 * 2 |
+          e1:m7 |
+          fis2:m7.5- f2:m6 |
+          s1  |
+          a4:m11/d d4:13 d4:m9  g4:11.13 |
+          c2:6/g f2:maj7/g
+          s2 b2:7 | s2 cis:m7.5-  | fis2:min7.5-.11+ b:7.9+ | s2 g2:maj7 | fis:m7.5- s2 |
+        s1 |
+        f2:maj9 fis4:min7.5- b:7 |  e2:m9  s2  | d:9 g:sus4.7  |  %F# half diminished always has B in sop, could be see as D7b13
+        s1 * 2 | e2:m7 a2:m9 | fis:min7.5- f:m7 |
+        s1 * 2 | f1:/g | 
+        s2 d4:m7 g4:7
+        
+    
+       
+                          
+
+
+
+
+} 
+
+
+
+
+
+
+\score {
+  <<                          % ← this is the one you asked about (Score-level)
+    \new Staff = "treble" {
+      <<                      % ← combines melody + breaks within the Staff
+        \melody
+        \new Voice {
+          \partial 2 s2
+          s1 * 4 \break
+          s1 * 4 \break
+          s1 * 4 \break
+          \repeat unfold 5 { s1 * 4 \break }
+        }
+      >>
+    }
+    
+    
+      \new RhythmicStaff {
+        
+        \new Voice \with {
+  \omit NoteHead
+  \omit Stem
+  \omit Beam
+  \omit Flag
+} \phrasing
+       
+      
+      }    
+    
+  >>
+  
+  
+  \layout {}
+  \midi {}
+}
