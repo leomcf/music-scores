@@ -121,7 +121,7 @@ a2 g4 f | %m28
   e2 e 	| %m29
   d4 c'2 b4  | %30
   c1		| %m31
-  R1    \bar ".|"  | %m32 
+  R1    \bar "|."  %m32 
 
     }
     
@@ -183,15 +183,16 @@ harmonicR = {
 \repeat unfold 11 {c2 c2} 
 c2 c4 c4 % measure 12 harmonic rhythm
 \repeat unfold 19 { c2 c2 }
-  
+  c2 c2
 }
 
 
 
+chords = \chordmode {
+  
 
 
-
-
+}
 
 %%% Roman numeral analysis (attached to phrasing voice)
 %%% Usage: \markup \rN { I }  \markup \rN { ii }  \markup \rN { V 7 }
