@@ -3,20 +3,11 @@
 
 
 
-\header {
-  title = "Too Young to Go Steady"
-  instrument = \markup { "de l'album" \italic "This Time It's Love"}
-  composer = "Jimmy McHugh"
-  arranger = "Harold Adamson"
-  copyright = "Performance du Kurt Elling"
-
-  
-}
 
 % Toggle variables for different analysis layers 
 showAnalysisOne = ##t  % First layer: notes against basic blues
-showAnalysisTwo = ##t   % Second layer: notes against alternate changes
-
+showAnalysisTwo = ##f   % Second layer: notes against alternate changes
+showAnalysisThree = ##f
 
 
 % First layer: red circles (notes that don't seem to belong to the written changes)
@@ -52,6 +43,19 @@ asteriskOne =
 
 
 
+\header {
+ 
+     #{
+       
+  title = "Too Young to Go Steady"
+  subtitle =  #(if showAnalysisOne  "étapes 1 et 2") 
+   subtitle =  #(if showAnalysisTwo  "étapes 3 et 4") 
+    %instrument = \markup { "de l'album" \italic "This Time It's Love"}
+  composer = "Jimmy McHugh"
+  arranger = "Harold Adamson"
+  copyright = "Performance du Kurt Elling"
+
+}
 
 
 
@@ -137,7 +141,7 @@ contrebasse = {
           s1 * 4 
           s1 * 2 s1\asteriskOne s2\asteriskOne s2\asteriskOne 
           s1 * 2 | s2 s2\asteriskOne | s2 s2\asteriskOne  | 
-          s2 s2\asteriskOne | s1 | s2 s2\asteriskOne | s1 |
+          s2 s2\asteriskOne | s1 | s2 s2\asteriskOne | s1\asteriskOne |
           s1 | s2\asteriskOne s4\asteriskOne s4\asteriskOne | s1 * 2 | 
           s1 * 2 |  s1\asteriskOne | \repeat unfold 2 {s2\asteriskOne} 
           s1 * 2 | s2\asteriskOne s2 | s2 s4\asteriskOne s4\asteriskOne | 
@@ -324,7 +328,7 @@ alternateChords = \chordmode {
           s1  |
           a4:m11/d d4:13 d4:m9  g4:11.13 |
           c2:6/g f2:maj7/g
-          s2 b2:7 | s2 cis:m7.5-  | fis2:min7.5-.11+ b:7.9+ | s2 g2:maj7 | s1 |
+          s2 b2:7 | s2 cis:m7.5-  | fis2:min7.5-.11+ b:7.9+ | s2 g2:maj7 | fis:m7.5- s2 |
         s1 |
         f2:maj9 fis4:min7.5- b:7 |  e2:m9  s2  | d:9 g:sus4.7  |  %F# half diminished always has B in sop, could be see as D7b13
         s1 * 2 | e2:m7 a2:m9 | fis:min7.5- f:m7 |
