@@ -2,7 +2,7 @@
 
 \include "roman_numeral_analysis_tool.ily"
 
-
+showAnalysisAdvanced = ##t
 
 
 
@@ -22,9 +22,31 @@ showAnalysisTwo = ##t   % Second layer: notes against alternate changes
 
 
 
+
+
+advancedAnalysis =
+#(define-music-function (advanced plain) (ly:music? ly:music?)
+  (if showAnalysisAdvanced
+    #{
+      \override LyricText.color = #(x11-color 'orange)
+      \override LyricText.font-series = #'bold
+      #advanced
+      \revert LyricText.color
+      \revert LyricText.font-series
+    #}
+    #{
+      \override LyricText.color = #black
+      \override LyricText.font-series = #'normal
+      #plain
+      \revert LyricText.color
+      \revert LyricText.font-series
+    #}))
+
+
+
 % First layer: red circles (notes that don't seem to belong to the written changes)
 redCircle = {
-  #(if showAnalysisOne
+  #(if advancedAnalysis
      #{
        \once \override NoteHead.layer = #-1
        \once \override NoteHead.stencil = #(lambda (grob)
@@ -86,10 +108,12 @@ global = {
 
 melody = \relative c'  {   \clef "treble" 
   
-   \repeat unfold 2 { \partial 2   e4 f   |
+\partial 2   e4 f   |
+   \repeat unfold 2 { 
   
   \sectionLabel \markup { \rounded-box { A } }
-g2 b | %1
+
+g2 b2  | %1
   a4 g  e d | %2
   e1~		| %m3
   e4 g e d | %4
@@ -104,17 +128,17 @@ g2 b | %1
    \sectionLabel \markup { \rounded-box { B } }c2 	c 	| %m9
   c4 d2 b4 | %10
   a2	a 	| %m11
-  g e4 fis	| %m12
+  g e4 \redCircle fis	| %m12
   g2 g 	| %m13
-  g4 a2  fis4 | %14
+  g4 a2  \redCircle fis4 | %14
   g1~		| %m15
-  g4 r4   %m16 
+  g4 r4 e f |   %m16 
   
     }
     
       \volta 2 {
    \sectionLabel \markup { \rounded-box { C } }
-   c2 	c 	| %m25
+   c'2 	c 	| %m25
   c4 d2 b4 | %26
  bes2 bes	| %m27
 a2 g4 f | %m28
@@ -134,9 +158,9 @@ a2 g4 f | %m28
  
 
 
-phrasing = {
+phrasingMelodic = {
   \startPat
-  \partial 2 c4( c
+  \partial 2 c4( c |
   c4 c c c | %m1
   c4 c c c | %m2
   c4) c c c | %m3
@@ -172,6 +196,44 @@ phrasing = {
 }
 
 
+phrasingHarmonic = {
+  \startPat
+  \partial 2 c4 c |
+  \slurDotted
+  c4( c c c | %m1
+  c4 c c c | %m2
+  c4)( c c c | %m3
+  c4 c c c | %m4
+  c4)( c c c | %m5
+  c4 c c c | %m6
+  c4)( c c c | %m7
+  c4 c c c | %m8
+  c4)( c c c | %m9
+  c4 c c) c | %m10
+  c4( c c c | %m11
+  c4) c c c | %m12
+  c4( c c c | %m13
+  c4 c c c | %m14
+  c4)( c c c | %m15
+  c4 c c c | %m16
+  c4)( c c c | %m17
+  c4 c c c | %m18
+  c4)( c c c | %m19
+  c4 c c c | %m20
+  c4)( c c c | %m21
+  c4 c c c | %m22
+  c4)( c c c | %m23
+  c4 c c c | %m24
+  c4)( c c c | %m25
+  c4 c c) c | %m26
+  c4( c c c | %m27
+  c4) c c( c | %m28
+  c4 c c c | %m29
+  c4 c c c | %m30
+  c4) \stopPat s2. | %m31
+  s1 | %m32  \bar ".|"
+  
+}
 
 
 
@@ -188,9 +250,51 @@ c2 c4 c4 % measure 12 harmonic rhythm
 
 
 
-chords = \chordmode {
-  
+mainChords = \chordmode {
 
+  \partial 2 s2 |
+       \repeat unfold 2 {
+  c2:maj7 a:m7 | %m1
+  d:m7 	g:7 | %m2 m1 & 2 anatole 
+    c2:maj7 a:m7 | %m3
+  d:m7 	g:7 | %m4  % m3 & 4 anatole
+  c:maj7 d:m7 | %m5
+  e:m7 	a:m7 | %m6
+  d1:m11 	          | %m7
+  g2:7 	g:7/f | %m8  % m5- 8 anatole (durations doublées par rapport aux exemples précedents) 
+     }
+     
+     \alternative {
+       
+       \volta 1 {
+         
+         c2:6/e  e:dim7 | %m9  
+         d:m7  	g:7 	| %m10
+         a:m7 	d:7.9- | %m11
+         g:6		cis4:m7.5-  d/c	| %m12
+         g2/b  	bes:dim7 | %m13
+         a:m7 	d:7.9-	| %m14
+         d1:m11 	| %m15
+         g:7.9- 	| %m16
+                  
+       }
+       
+       \volta 2 {
+            c2:6/e  e:dim7 | %m25
+         d2:m7 	g:7 	| %m26
+         g:m7 	c:7 	| %m27
+        f:maj7	bes:7 | %m28
+        e:m7		a:7.9- | %m29
+        d:m7		g:7.9-| %m30
+        c1:6			
+         
+         
+       }
+       
+       
+       
+       
+     }
 
 }
 
@@ -203,8 +307,9 @@ analysis = \lyricmode {
   \override LyricText.self-alignment-X = #-0.6
  \set stanza = \markup \rounded-box \concat{ { \italic  "do" "  : " } }
   %% A section (mm. 1-8)
-       \markup \rN { I } | %anacrusis
-      \skip 2  \markup \rN { vi }	|
+     %anacrusis
+      \skip 2  |
+          \markup \rN { I }\markup \rN { vi }	|
 
  \markup \rN { ii } \markup \rN { V }   | %m1-2
  \markup \rN { I }   \markup \rN { vi } \markup \rN { ii } \markup \rN { V }  | %m3-4
@@ -212,18 +317,49 @@ analysis = \lyricmode {
 \markup \rN {ii } \skip 2  \markup \rN { V }  \skip 2     | %m7-8 we didn't worry about the F here in the bass as it is implicit in the system of Mehghan
 
   %% B section (mm. 9-16)
-  \markup \rN {I } \markup\rN  {fiii o  } \markup \rN {ii } \markup \rN {V }     | %m9-10 
+  \markup \rN {I }
+  \advancedAnalysis
+  {
+    \markup{VIx} 
+  }
+  {
+   \markup\rN  {fiii o  } }
+   
+   \markup \rN {ii } \markup \rN {V }     | %m9-10 
   \markup \rN {vi } \markup  {IIx } % put 
-  \set stanza = \markup \rounded-box { \concat { \italic "sol" " :" } }
-  \markup \rN { I }  \markup \concat { "(" \rN { siv h } ")" } \markup  \rN {V }    | %m11-12: vi(=ii/G) V7/G | I in G ... %% 
-  \markup \rN {I } \markup \rN { fiii o } \markup \rN {ii } \markup \rN {V }     | %m13-14 
-  \markup \rN { v m } \skip 2      | %m15
-  
-    \set stanza = \markup \rounded-box { \concat { \italic "do" " :" } }
-    \markup { V}
 
- \markup \rN { I } | %anacrusis
-      \skip 2 \markup \rN { vi }	|
+\advancedAnalysis
+ {   \set stanza = \markup \rounded-box { \concat { \italic "sol" " :" } }
+
+ \markup \rN { I }
+    \markup  { IIx } 
+      \markup \rN { V }  } % 11-12
+  
+  {  \markup { V }
+    \markup  \rN { si h } 
+ \markup{IIx}  } %11-12 simple analysis 
+
+
+      
+      
+      %m11-12: vi(=ii/G) V7/G | I in G ... %% 
+      
+  \advancedAnalysis{         
+         \markup \rN {I } \markup { VIx } \markup \rN {ii } \markup \rN {V }     | %m13-14 
+  \markup { vm } \skip 2    
+    
+    
+  }
+  
+  {
+      \markup \rN {V } \markup \rN { fvii o } \markup \rN {vi } \markup  {IIx }     | %m13-14 
+  \markup { ii } \skip 2      | %m15 
+  }
+
+  
+    %\set stanza = \markup \rounded-box { \concat { \italic "do" " :" } }
+    \markup { V}  \skip2 | %anacrusis
+     \markup \rN { I } \markup \rN { vi }	|
 
   \markup \rN { ii } \markup \rN { V }   | %m1-2
  \markup \rN { I }   \markup \rN { vi } \markup \rN { ii } \markup \rN { V }  | %m3-4
@@ -232,9 +368,12 @@ analysis = \lyricmode {
 
 
   %% C section (mm. 25-32)
-  \markup \rN {I } \markup \rN {fiii o } \markup \rN {ii } \markup \rN {V }     | %m25-26 
+  \markup \rN {I } 
+ \advancedAnalysis{ \markup {VIx } }
+ {\markup \rN {iii o}}
+  \markup \rN {ii } \markup \rN {V }     | %m25-26 
 
-\markup \rN {v m } \skip 2 \markup \rN {IV } \markup \concat { \rN { fVI } "x" }  | %m27-28 TODO
+\markup  {vm } \markup {Ix} \markup \rN {IV } \markup \concat { \rN { fVI } "x" }  | %m27-28 TODO
   \markup \rN {iii }   \markup{VIx} \markup{ii} \markup{V}     | %m29-30 TODO
  \markup{I} \skip 2  | %m31-32 TODO
 }
@@ -243,18 +382,20 @@ analysis = \lyricmode {
 %%% Secondary analysis line — modulation to sol (G major) at m11
 %%% Skips 21 half-notes (= pickup + m1–10) then shows ii V I in G
 analysisSol = \lyricmode {
+    \override LyricText.color = #(x11-color 'orange)
+      \override LyricText.font-series = #'bold
   \override LyricText.self-alignment-X = #-0.6
   \skip 2
-  \repeat unfold 17 \skip 2   %% advance to m9
-  \markup {IIx}
+  \repeat unfold 18 \skip 2   %% advance to m9
+  
   \skip 2 \skip 2
   
   \set stanza = \markup \rounded-box { \concat { \italic "sol" " :" } }
-  \markup \rN { ii }
   \markup \rN { V }
+\skip
   \repeat unfold 4 \skip 2
-  \markup {IIx }
-  \repeat unfold 2 \skip 2
+
+  \repeat unfold 6 \skip 2 %% this spacer not working 
     \set stanza = \markup \rounded-box { \concat { \italic "do" " :" } }
     \markup {ii} 
     \repeat unfold 23 \skip 2   %% advance to m27
@@ -441,34 +582,34 @@ analysisSol = \lyricmode {
 %   c
 %   }
 % }
-alternateChords = \chordmode {  
-  
-    
-          %\voiceTwo  % Lower voice number to make sure it's underneath
-          \partial 4 s4
-          s1 * 4 
-          s1 * 4 
-          s1 * 2 |
-          e1:m7 |
-          fis2:m7.5- f2:m6 |
-          s1  |
-          a4:m11/d d4:13 d4:m9  g4:11.13 |
-          c2:6/g f2:maj7/g
-          s2 b2:7 | s2 cis:m7.5-  | fis2:min7.5-.11+ b:7.9+ | s2 g2:maj7 | fis:m7.5- s2 |
-        s1 |
-        f2:maj9 fis4:min7.5- b:7 |  e2:m9  s2  | d:9 g:sus4.7  |  %F# half diminished always has B in sop, could be see as D7b13
-        s1 * 2 | e2:m7 a2:m9 | fis:min7.5- f:m7 |
-        s1 * 2 | f1:/g | 
-        s2 d4:m7 g4:7
-        
-    
-       
-                          
-
-
-
-
-} 
+% alternateChords = \chordmode {  
+%   
+%     
+%           %\voiceTwo  % Lower voice number to make sure it's underneath
+%           \partial 4 s4
+%           s1 * 4 
+%           s1 * 4 
+%           s1 * 2 |
+%           e1:m7 |
+%           fis2:m7.5- f2:m6 |
+%           s1  |
+%           a4:m11/d d4:13 d4:m9  g4:11.13 |
+%           c2:6/g f2:maj7/g
+%           s2 b2:7 | s2 cis:m7.5-  | fis2:min7.5-.11+ b:7.9+ | s2 g2:maj7 | fis:m7.5- s2 |
+%         s1 |
+%         f2:maj9 fis4:min7.5- b:7 |  e2:m9  s2  | d:9 g:sus4.7  |  %F# half diminished always has B in sop, could be see as D7b13
+%         s1 * 2 | e2:m7 a2:m9 | fis:min7.5- f:m7 |
+%         s1 * 2 | f1:/g | 
+%         s2 d4:m7 g4:7
+%         
+%     
+%        
+%                           
+% 
+% 
+% 
+% 
+% } 
 
 
 
@@ -492,14 +633,22 @@ s1 * 4   % bar 29–32, no break
     }
     
     
+    \new ChordNames {
+      
+      \mainChords
+      
+      
+    }
+    
       \new RhythmicStaff {
 <<
+  
         \new Voice = "phrasing" \with {
         %  \omit NoteHead
     %       \omit Stem
 %           \omit Beam
 %           \omit Flag
-        } \phrasing
+        } \phrasingHarmonic
 
         \new Voice = "harmonicR" \with {
           \omit NoteHead
@@ -510,7 +659,10 @@ s1 * 4   % bar 29–32, no break
 >>
       }
       \new Lyrics \lyricsto "harmonicR" { \analysis }
-      \new Lyrics \lyricsto "harmonicR" { \analysisSol }
+  \advancedAnalysis{
+  \new Lyrics \lyricsto "harmonicR" { \analysisSol }}
+  {
+  }
   %     \new Lyrics \with {
 %         \override VerticalAxisGroup.nonstaff-relatedstaff-spacing = #'((basic-distance . 6))
 %       } \lyricsto "phrasing" { \analysis }
