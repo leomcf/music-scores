@@ -11,14 +11,15 @@ showAnalysisAdvanced = ##t
   title = "I Could Write A Book"
   composer = "Richard Rodgers"
   arranger = "Lorenz  Hart"
-  copyright = "© 1940"
+  copyright = "correction de Leo McFadden"
 
   
 }
 
-% Toggle variables for different analysis layers 
+% Toggle variables for different analysis layers
 showAnalysisOne = ##t  % First layer: notes against basic blues
-showAnalysisTwo = ##t   % Second layer: notes against alternate changes
+showAnalysisTwo = ##t  % Second layer: notes against alternate changes
+showDegreeBoxes = ##t% Colored boxes: I/i=red  V=blue  IV=green  iii=orange
 
 
 
@@ -28,7 +29,7 @@ advancedAnalysis =
 #(define-music-function (advanced plain) (ly:music? ly:music?)
   (if showAnalysisAdvanced
     #{
-      \override LyricText.color = #(x11-color 'orange)
+     % \override LyricText.color = #(x11-color 'orange)
       \override LyricText.font-series = #'bold
       #advanced
       \revert LyricText.color
@@ -56,8 +57,8 @@ redCircle = {
              (grob-interpret-markup grob
                (markup
                  #:with-color red
-                 #:translate (cons 0.7 0.0)
-                 #:draw-circle 1.0 0.2 #f)))))
+                 #:translate (cons 0.75 0.0)
+                 #:draw-circle 1.1 0.2 #f)))))
      #}
      #{ #})
 }
@@ -82,6 +83,17 @@ stopPat = {
   \improvisationOff
   \undo \omit Stem
 }
+
+% Markup command: wraps content in a colored box when showDegreeBoxes = ##t
+% Usage: \markup \degreeBox #red { I }   \markup \degreeBox #blue { V }
+%        \markup \degreeBox #(x11-color 'green4) { IV }
+%        \markup \degreeBox #(x11-color 'orange) { iii }
+#(define-markup-command (degreeBox layout props color content)
+  (color? markup?)
+  (if showDegreeBoxes
+      (interpret-markup layout props
+        (markup #:with-color color #:box content))
+      (interpret-markup layout props content)))
 
 
 
@@ -120,7 +132,7 @@ g2 b2  | %1
   e g e d |  %m5
   e c'2 e,4 | %m6
   g1~ 	| %m7
-  g2	 a4 b  | %m8
+  g2	 a4 b  \bar "||" %m8
  \set Score.voltaSpannerDuration = #(ly:make-moment 1/1)
    \alternative {
   \volta 1 { 
@@ -132,7 +144,7 @@ g2 b2  | %1
   g2 g 	| %m13
   g4 a2  \redCircle fis4 | %14
   g1~		| %m15
-  g4 r4 e f |   %m16 
+  g4 r4 e f \bar"||"   %m16 
   
     }
     
@@ -268,7 +280,7 @@ mainChords = \chordmode {
        
        \volta 1 {
          
-         c2:6/e  e:dim7 | %m9  
+         c2:6/e  ees:dim7 | %m9  
          d:m7  	g:7 	| %m10
          a:m7 	d:7.9- | %m11
          g:6		cis4:m7.5-  d/c	| %m12
@@ -280,7 +292,7 @@ mainChords = \chordmode {
        }
        
        \volta 2 {
-            c2:6/e  e:dim7 | %m25
+            c2:6/e  ees:dim7 | %m25
          d2:m7 	g:7 	| %m26
          g:m7 	c:7 	| %m27
         f:maj7	bes:7 | %m28
@@ -298,112 +310,268 @@ mainChords = \chordmode {
 
 }
 
+
+anatoleUp = 
+{ 
+  b''2 c |
+  c b    |  %%%don't touch this 
+  
+  }
+  
+  
+ anatoleMid = 
+ {
+  e'2 g | 
+  f	f |  % don't add to this. 
+  
+  
+}
+
+soprano = \relative c  {
+  
+  \global 
+  \clef"treble" 
+  \partial 2 r2 | 
+  
+  \repeat unfold 2 {
+    
+  \repeat unfold 2 { \anatoleUp }  
+  
+  b2 c 	| %m5
+  d c 		| %m6
+  c1 		| %m7
+  b2  b2		|  %8
+  
+  
+  } %A section ends here. 
+      
+  \alternative{
+  
+  
+  \volta 1   { 
+    c2 c	 | % m9 ré double bémol nommé do   
+    c 	b	|  %m10
+    c 	c  	| %m11
+    b2 b4 a  | %m12
+    d2  des | %m13 
+    c    c	| % %m14
+    c1 	| %m15
+    b		| %m16
+      }
+    
+  \volta 2 {
+  
+  c2 c	| %m25
+  c  b		| %m26
+  bes  bes	| %m27
+  a 	aes	| %m28
+  g 	g	| %m29
+  f 	f	| %m30
+  e1		| %m31
+  R1		| %m32	
+  
+  
+       }
+  
+    }
+
+}
+  
+  
+  
+  alto = \relative c {
+ \global 
+ \clef"treble"
+ \partial 2 r2 
+ 
+ \repeat unfold 2 {
+   
+   \repeat unfold 2 { \anatoleMid }
+   
+   e2 f | %m5
+   g2 g | %m6
+   \redCircle g1  | %m7
+    g2   g2		|
+   
+   
+     } %end of A section
+     
+   
+   \alternative{
+   
+   \volta 1 {
+      
+      g ges      | %m9
+      f   f	   | %m10
+      g  fis	   | %m11
+      e  e4 fis | %m12
+      g2 g	|  %m13 second g is really a la double bémol 
+      g2  fis	| %m14
+      g1	| %m15
+      f1 	| %m16
+           
+      }
+    
+    \volta 2 {
+      
+      g2  ges   | %m25
+      f 		f  | %m26
+      f		e | %m27
+      e 	d | %m28
+      d 	cis | %m29
+      c!2 	b  | %m30
+      a1	| %m31
+      R1	| %m32
+      
+           }
+    
+      }
+  
+  }
+
+
+
+bassLine = \relative c {
+  \global
+  \clef "bass"
+  \partial 2 r2 |
+  \repeat unfold 2 {
+    % A section (mm. 1-8)
+    c2  a2   |    % m1:  Cmaj7  Am7
+    d2  g2   |    % m2:  Dm7    G7
+    c,2 a2   |    % m3:  Cmaj7  Am7
+    d2  g2   |    % m4:  Dm7    G7
+    c,2 d2   |    % m5:  Cmaj7  Dm7
+    e2  a2   |    % m6:  Em7    Am7
+    d,1      |    % m7:  Dm11
+    g2  f2   |    % m8:  G7     G7/F (slash → F bass)
+    \alternative {
+      \volta 1 {
+        % B section (mm. 9-16)
+        e2  ees2       |    % m9:  C6/E (slash → E bass)  Edim7
+        d2  g2       |    % m10: Dm7    G7
+        a2  d,2      |    % m11: Am7    D7b9
+        g2  cis,4 c4 |    % m12: G6  C#m7b5  D/C (slash → C bass)
+        b2  bes2     |    % m13: G/B (slash → B bass)  Bbdim7
+        a2  d2       |    % m14: Am7    D7b9
+        d1           |    % m15: Dm11
+        g,1          |    % m16: G7b9 — G2, anchors second-pass A to start on C3
+      }
+      \volta 2 {
+        % C section (mm. 25-32)
+        e'2  ees2   |    % m25: C6/E (slash → E bass)  Edim7
+        d2  g2   |    % m26: Dm7    G7
+        g2  c,2  |    % m27: Gm7    C7
+        f2  bes2 |    % m28: Fmaj7  Bb7
+        e,2 a2   |    % m29: Em7    A7b9
+        d,2 g2   |    % m30: Dm7    G7b9
+        c,1      |    % m31: C6
+        R1 \bar "|."  % m32
+      }
+    }
+  }
+}
+
+
+
 %%% Roman numeral analysis (attached to phrasing voice)
-%%% Usage: \markup \rN { I }  \markup \rN { ii }  \markup \rN { V 7 }
-%%% Secondary functions: \markup \rN { V 7 / ii }
-%%% Qualities: o = dim, h = half-dim, + = aug
-%%% Key indication: \set stanza = \markup \keyIndication { C }
+%%% \rN retained only where special notation is used (o, h, f-prefix, concat)
+%%% Boxes: \degreeBox #red { I }  #blue "V"  #(x11-color 'green4) "IV"  #(x11-color 'orange) "iii"
+%%% Trump rule: when advancedAnalysis or analysisSol is active at a position,
+%%%   only box within those variables — see m11-12 (V) and m27-28 (IV) below
 analysis = \lyricmode {
   \override LyricText.self-alignment-X = #-0.6
- \set stanza = \markup \rounded-box \concat{ { \italic  "do" "  : " } }
-  %% A section (mm. 1-8)
-     %anacrusis
-      \skip 2  |
-          \markup \rN { I }\markup \rN { vi }	|
+  \set stanza = \markup \rounded-box \concat{ { \italic "do" "  : " } }
 
- \markup \rN { ii } \markup \rN { V }   | %m1-2
- \markup \rN { I }   \markup \rN { vi } \markup \rN { ii } \markup \rN { V }  | %m3-4
- \markup \rN {I } \markup \rN {ii } \markup \rN {iii }     \markup \rN {vi }    | %m5-6 
-\markup \rN {ii } \skip 2  \markup \rN { V }  \skip 2     | %m7-8 we didn't worry about the F here in the bass as it is implicit in the system of Mehghan
+  %% A section (mm. 1-8) — appears twice (unfold 2 in other voices)
+  %anacrusis
+  \skip 2 |
+  \markup \degreeBox #red { I }  \markup { vi }  |
+  \markup { ii }  \markup \degreeBox #blue { V }  | %m1-2
+  \markup \degreeBox #red { I }  \markup { vi }  \markup { ii }  \markup \degreeBox #blue { V }  | %m3-4
+  \markup \degreeBox #red { I }  \markup { ii }  \markup \degreeBox #(x11-color 'orange) { iii }  \markup { vi }  | %m5-6
+  \markup { ii }  \skip 2  \markup \degreeBox #blue { V }  \skip 2  | %m7-8
 
   %% B section (mm. 9-16)
-  \markup \rN {I }
+  \markup \degreeBox #red { I }
   \advancedAnalysis
-  {
-    \markup{VIx} 
+  { \skip 2 }
+  { \markup \rN { fiii o } }
+  \markup { ii }  \markup \degreeBox #blue { V }  | %m9-10
+
+  \markup { vi }  \markup { IIx }
+  \advancedAnalysis
+  { %% advanced (sol context) — analysisSol boxes the V here, so omit V box
+    \set stanza = \markup \rounded-box { \concat { \italic "sol" " :" } }
+    \markup \degreeBox #red { I }
+    \markup { IIx }
+    \markup "V"
+  }
+  { %% plain — analysisSol not shown, so box V here
+    \markup \degreeBox #blue { V }
+    \markup \rN { si h }
+    \markup { IIx }
+  } %m11-12
+
+  %m11-12: vi(=ii/G) V7/G | I in G
+  \advancedAnalysis {
+    \markup \degreeBox #red { I }  \markup \rN { fvii o }  \markup { ii }  \markup \degreeBox #blue { V }  | %m13-14
+    \markup { vm }  \skip 2
   }
   {
-   \markup\rN  {fiii o  } }
-   
-   \markup \rN {ii } \markup \rN {V }     | %m9-10 
-  \markup \rN {vi } \markup  {IIx } % put 
-
-\advancedAnalysis
- {   \set stanza = \markup \rounded-box { \concat { \italic "sol" " :" } }
-
- \markup \rN { I }
-    \markup  { IIx } 
-      \markup \rN { V }  } % 11-12
-  
-  {  \markup { V }
-    \markup  \rN { si h } 
- \markup{IIx}  } %11-12 simple analysis 
-
-
-      
-      
-      %m11-12: vi(=ii/G) V7/G | I in G ... %% 
-      
-  \advancedAnalysis{         
-         \markup \rN {I } \markup { VIx } \markup \rN {ii } \markup \rN {V }     | %m13-14 
-  \markup { vm } \skip 2    
-    
-    
+    \markup \degreeBox #blue { V }  \markup \rN { fvii o }  \markup { vi }  \markup { IIx }  | %m13-14
+    \markup { ii }  \skip 2  | %m15
   }
-  
-  {
-      \markup \rN {V } \markup \rN { fvii o } \markup \rN {vi } \markup  {IIx }     | %m13-14 
-  \markup { ii } \skip 2      | %m15 
-  }
-
-  
-    %\set stanza = \markup \rounded-box { \concat { \italic "do" " :" } }
-    \markup { V}  \skip2 | %anacrusis
-     \markup \rN { I } \markup \rN { vi }	|
-
-  \markup \rN { ii } \markup \rN { V }   | %m1-2
- \markup \rN { I }   \markup \rN { vi } \markup \rN { ii } \markup \rN { V }  | %m3-4
- \markup \rN {I } \markup \rN {ii } \markup \rN {iii }     \markup \rN {vi }    | %m5-6 
-\markup \rN {ii } \skip 2  \markup \rN { V }  \skip 2     | %m7-8 we didn't worry about the F here in the bass as it is implicit in the system of Mehghan
-
+    \set stanza = \markup \rounded-box { \concat { \italic "do" " :" } }
+  \markup \degreeBox #blue { V }  \skip 2 | %anacrusis (return to A)
+  \markup \degreeBox #red { I }  \markup { vi }  |
+  \markup { ii }  \markup \degreeBox #blue { V }  | %m1-2
+  \markup \degreeBox #red { I }  \markup { vi }  \markup { ii }  \markup \degreeBox #blue { V }  | %m3-4
+  \markup \degreeBox #red { I }  \markup { ii }  \markup \degreeBox #(x11-color 'orange) { iii }  \markup { vi }  | %m5-6
+  \markup { ii }  \skip 2  \markup \degreeBox #blue { V }  \skip 2  | %m7-8
 
   %% C section (mm. 25-32)
-  \markup \rN {I } 
- \advancedAnalysis{ \markup {VIx } }
- {\markup \rN {iii o}}
-  \markup \rN {ii } \markup \rN {V }     | %m25-26 
+  \markup \degreeBox #red { I }
+  \advancedAnalysis { \markup { VIx } }
+  { \markup \rN { iii o } }
+  \markup { ii }  \markup \degreeBox #blue { V }  | %m25-26
 
-\markup  {vm } \markup {Ix} \markup \rN {IV } \markup \concat { \rN { fVI } "x" }  | %m27-28 TODO
-  \markup \rN {iii }   \markup{VIx} \markup{ii} \markup{V}     | %m29-30 TODO
- \markup{I} \skip 2  | %m31-32 TODO
+  %% m27-28: analysisSol (fa context) is active here when advanced is on
+  %%   → box IV only when analysisSol is NOT showing (plain mode)
+  \advancedAnalysis
+  { \markup { vm }  \markup { Ix }  \markup \degreeBox #green { IV }  \markup \concat { \rN { fVI } "x" }  | }
+  { \markup { vm }  \markup { Ix }  \markup \degreeBox #(x11-color 'green4) { IV }  \markup \concat { \rN { fVI } "x" }  | } %m27-28
+
+  \markup \degreeBox #(x11-color 'orange) { iii }  \markup { VIx }  \markup { ii }  \markup \degreeBox #blue { V }  | %m29-30
+  \markup \degreeBox #red { I }  \skip 2  | %m31-32
 }
 
 
 %%% Secondary analysis line — modulation to sol (G major) at m11
 %%% Skips 21 half-notes (= pickup + m1–10) then shows ii V I in G
+%%% Trump rule: V at m11 and V/I at m27-28 (fa) are boxed HERE, not in analysis
 analysisSol = \lyricmode {
-    \override LyricText.color = #(x11-color 'orange)
-      \override LyricText.font-series = #'bold
-  \override LyricText.self-alignment-X = #-0.6
+   % \override LyricText.color = #(x11-color 'orange)
+    \override LyricText.font-series = #'bold
+    \override LyricText.self-alignment-X = #-0.6
   \skip 2
   \repeat unfold 18 \skip 2   %% advance to m9
-  
+
   \skip 2 \skip 2
-  
+
   \set stanza = \markup \rounded-box { \concat { \italic "sol" " :" } }
-  \markup \rN { V }
+  \markup \degreeBox #blue { V }   %% m11: V of G — boxed here, not in analysis
 \skip
   \repeat unfold 4 \skip 2
 
-  \repeat unfold 6 \skip 2 %% this spacer not working 
-    \set stanza = \markup \rounded-box { \concat { \italic "do" " :" } }
-    \markup {ii} 
-    \repeat unfold 23 \skip 2   %% advance to m27
-    
-        \set stanza = \markup \rounded-box { \concat { \italic "fa" " :" } }
-    \markup {ii}  \markup {V} \markup{I} \markup{IVx}
- 
-    
+  \repeat unfold 6 \skip 2 %% this spacer not working
+  \set stanza = \markup \rounded-box { \concat { \italic "do" " :" } }
+  \markup { ii }
+  \repeat unfold 23 \skip 2   %% advance to m27
+
+  \set stanza = \markup \rounded-box { \concat { \italic "fa" " :" } }
+  \markup { ii }  \markup \degreeBox #blue { V }  \markup \degreeBox #red { I }  \markup \degreeBox #green { IVx }
+  %% m27-28: V and I boxed here; analysis m27-28 IV box suppressed (trump rule)
 }
 
 
@@ -553,7 +721,7 @@ analysisSol = \lyricmode {
   
   
   \paper {
-    indent = 0
+    indent = 20
   system-system-spacing.basic-distance = 20  % Increased spacing between systems
   score-system-spacing.basic-distance = 25   % Space between title/header and first system
   markup-system-spacing.basic-distance = 18  % Space between text markups and systems
@@ -666,7 +834,21 @@ s1 * 4   % bar 29–32, no break
   %     \new Lyrics \with {
 %         \override VerticalAxisGroup.nonstaff-relatedstaff-spacing = #'((basic-distance . 6))
 %       } \lyricsto "phrasing" { \analysis }
-    
+
+    \new StaffGroup \with {
+      instrumentName = \markup { \italic "cpt. à 3 voix" }
+      shortInstrumentName = "ctp."
+    } <<
+      \new Staff {
+        <<
+          \new Voice = "upper" { \voiceOne \soprano }
+          \new Voice = "mid"   { \voiceTwo \alto }
+        >>
+      }
+      \new Staff {
+        \bassLine
+      }
+    >>
   >>
   
   
