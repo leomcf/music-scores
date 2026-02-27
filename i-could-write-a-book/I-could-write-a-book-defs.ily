@@ -1,0 +1,577 @@
+%%% I-could-write-a-book-defs.ily
+%%% Shared definitions: music variables, functions, analysis.
+%%% Set toggle variables BEFORE \include-ing this file:
+%%%   showAnalysisAdvanced  showAnalysisOne  showAnalysisTwo
+%%%   showDegreeBoxes
+
+\include "../roman_numeral_analysis_tool.ily"
+
+
+advancedAnalysis =
+#(define-music-function (advanced plain) (ly:music? ly:music?)
+  (if showAnalysisAdvanced advanced plain))
+
+
+
+% First layer: red circles (notes that don't seem to belong to the written changes)
+% Controlled by showAnalysisAdvanced toggle
+redCircle = {
+  #(if showAnalysisAdvanced
+     #{
+       \once \override NoteHead.layer = #-1
+       \once \override NoteHead.stencil = #(lambda (grob)
+         (let* ((stil (ly:note-head::print grob)))
+           (ly:stencil-add
+             stil
+             (grob-interpret-markup grob
+               (markup
+                 #:with-color red
+                 #:translate (cons 0.75 0.0)
+                 #:draw-circle 1.1 0.2 #f)))))
+     #}
+     #{ #})
+}
+
+
+
+% Red asterisk above measure (for analysis layer one)
+asteriskOne =
+#(define-music-function () ()
+  (if showAnalysisOne
+      #{
+        ^\markup { \with-color #red \fontsize #6 "*" }
+      #}
+      #{ #}))
+
+
+startPat = {
+  \improvisationOn
+  \omit Stem
+}
+stopPat = {
+  \improvisationOff
+  \undo \omit Stem
+}
+
+% Markup command: wraps content in a colored box when showDegreeBoxes = ##t
+% Usage: \markup \degreeBox #red { I }   \markup \degreeBox #blue { V }
+%        \markup \degreeBox #(x11-color 'green4) { IV }
+%        \markup \degreeBox #(x11-color 'orange) { iii }
+#(define-markup-command (degreeBox layout props color content)
+  (color? markup?)
+  (if showDegreeBoxes
+      (interpret-markup layout props
+        (markup #:with-color color #:box content))
+      (interpret-markup layout props content)))
+
+
+
+
+global = {
+  \key c \major
+  \time 4/4
+}
+
+
+
+melody = \relative c'  {   \clef "treble"
+
+\partial 2   e4 f   |
+   \repeat unfold 2 {
+
+  \sectionLabel \markup { \rounded-box { A } }
+
+g2 b2  | %1
+  a4 g  e d | %2
+  e1~		| %m3
+  e4 g e d | %4
+  e g e d |  %m5
+  e c'2 e,4 | %m6
+  g1~ 	| %m7
+  g2	 a4 b  \bar "||" %m8
+ \set Score.voltaSpannerDuration = #(ly:make-moment 1/1)
+   \alternative {
+  \volta 1 {
+
+   \sectionLabel \markup { \rounded-box { B } }c2 	c 	| %m9
+  c4 d2 b4 | %10
+  a2	a 	| %m11
+  g e4 \redCircle fis	| %m12
+  g2 g 	| %m13
+  g4 a2  \redCircle fis4 | %14
+  g1~		| %m15
+  g4 r4 e f \bar"||"   %m16
+
+    }
+
+      \volta 2 {
+   \sectionLabel \markup { \rounded-box { C } }
+   c'2 	c 	| %m25
+  c4 d2 b4 | %26
+ bes2 bes	| %m27
+a2 g4 f | %m28
+  e2 e 	| %m29
+  d4 c'2 b4  | %30
+  c1		| %m31
+  R1    \bar "|."  %m32
+
+    }
+
+   }
+
+  }
+
+}
+
+
+
+phrasingMelodic = {
+  \startPat
+  \partial 2 c4( c |
+  c4 c c c | %m1
+  c4 c c c | %m2
+  c4) c c c | %m3
+  c4 c( c c | %m4
+  c4 c c c | %m5
+  c4 c c c | %m6
+  c4) c c c | %m7
+  c4 c c( c | %m8
+  c4 c c c | %m9
+  c4 c c c | %m10
+  c4 c c c | %m11
+  c4) c c( c | %m12
+  c4 c c c | %m13
+  c4 c c c | %m14
+  c4) c c c | %m15
+  c4 c c( c | %m16
+  c4 c c c | %m17
+  c4 c c c | %m18
+  c4) c c c | %m19
+  c4 c( c c | %m20
+  c4 c c c | %m21
+  c4 c c c | %m22
+  c4) c c c | %m23
+  c4 c c( c | %m24
+  c4 c c c | %m25
+  c4 c c c | %m26
+  c4 c c c | %m27
+  c4) c c( c | %m28
+  c4 c c c | %m29
+  c4 c c c | %m30
+  c4) c c c | %m31
+  c4 c c c | %m32  \bar ".|"
+}
+
+
+phrasingHarmonic = {
+  \startPat
+  \partial 2 c4 c |
+  \slurDotted
+  c4( c c c | %m1
+  c4 c c c | %m2
+  c4)( c c c | %m3
+  c4 c c c | %m4
+  c4)( c c c | %m5
+  c4)( c c c | %m6
+  c4 c c c | %m7
+  c4 c c c | %m8
+  c4)( c c c | %m9
+  c4 c c c | %m10
+  c4)( c c c | %m11
+  c4)( c c c | %m12
+  c4)( c c c | %m13
+  c4 c c c | %m14
+  c4)( c c c | %m15
+  c4 c c c | %m16
+  c4)( c c c | %m17
+  c4 c c c | %m18
+  c4)( c c c | %m19
+  c4 c c c | %m20
+  c4)( c c c | %m21
+  c4)( c c c | %m22
+  c4 c c c | %m23
+  c4 c c c | %m24
+  c4)( c c c | %m25
+  c4 c c c | %m26
+  c4)( c c c | %m27
+  c4 c c) c | %m28
+  c4( c c c | %m29
+  c4 c c c | %m30
+  c4) \stopPat s2. | %m31
+  s1 | %m32  \bar ".|"
+
+}
+
+
+% Stage-one version: same harmonic rhythm pattern without slurs
+phrasingHarmonicStageOne = {
+  \startPat
+  \partial 2 c4 c |
+  c4 c c c | %m1
+  c4 c c c | %m2
+  c4 c c c | %m3
+  c4 c c c | %m4
+  c4 c c c | %m5
+  c4 c c c | %m6
+  c4 c c c | %m7
+  c4 c c c | %m8
+  c4 c c c | %m9
+  c4 c c c | %m10
+  c4 c c c | %m11
+  c4 c c c | %m12
+  c4 c c c | %m13
+  c4 c c c | %m14
+  c4 c c c | %m15
+  c4 c c c | %m16
+  c4 c c c | %m17
+  c4 c c c | %m18
+  c4 c c c | %m19
+  c4 c c c | %m20
+  c4 c c c | %m21
+  c4 c c c | %m22
+  c4 c c c | %m23
+  c4 c c c | %m24
+  c4 c c c | %m25
+  c4 c c c | %m26
+  c4 c c c | %m27
+  c4 c c c | %m28
+  c4 c c c | %m29
+  c4 c c c | %m30
+  c4 \stopPat s2. | %m31
+  s1 | %m32  \bar ".|"
+}
+
+
+harmonicR = {
+  \partial 2 c2 |
+\repeat unfold 11 {c2 c2}
+c2 c4 c4 % measure 12 harmonic rhythm
+\repeat unfold 19 { c2 c2 }
+  c2 c2
+}
+
+
+
+mainChords = \chordmode {
+
+  \partial 2 s2 |
+       \repeat unfold 2 {
+  c2:maj7 a:m7 | %m1
+  d:m7 	g:7 | %m2 m1 & 2 anatole
+    c2:maj7 a:m7 | %m3
+  d:m7 	g:7 | %m4  % m3 & 4 anatole
+  c:maj7 d:m7 | %m5
+  e:m7 	a:m7 | %m6
+  d1:m11 	          | %m7
+  g2:7 	g:7/f | %m8  % m5- 8 anatole (durations doublées par rapport aux exemples précedents)
+     }
+
+     \alternative {
+
+       \volta 1 {
+
+         c2:6/e  ees:dim7 | %m9
+         d:m7  	g:7 	| %m10
+         a:m7 	d:7.9- | %m11
+         g:6		cis4:m7.5-  d/c	| %m12 %like an A9
+         g2/b  	bes:dim7 | %m13  % could be: substitution par supression de fondamentale d'un accord altéré p.48
+         a:m7 	d:7.9-	| %m14
+         d1:m11 	| %m15   p.43  (also measure 26-27 below)  « Il faut enfin ajouter qu'il arrive que le substitué subsiste à côté du substitut, par exemple dans l'exemple suivant : Am7 - D7 - Dm7 - G7 - C. Le substitué Dm7 reste après son substitut harmonique (D7). Dans ce cas, cela permet de conserver une carrure régulière si le rythme harmonique est de deux accords par mesure. »
+         g:7.9- 	| %m16
+
+       }
+
+       \volta 2 {
+            c2:6/e  ees:dim7 | %m25
+         d2:m7 	g:7 	| %m26
+         g:m7 	c:7 	| %m27    %%p43  « Il faut enfin ajouter qu'il arrive que le substitué subsiste à côté du substitut, par exemple dans l'exemple suivant : Am7 - D7 - Dm7 - G7 - C. Le substitué Dm7 reste après son substitut harmonique (D7). Dans ce cas, cela permet de conserver une carrure régulière si le rythme harmonique est de deux accords par mesure. » ALSO
+           %{
+21-1 à 25-2 : deux degrés V dans la même phrase
+L'interprétation qui me paraît la plus viable est que, à 24-1, le degré l en do majeur aurait dû être présent, en conclusion d'un modèle cycle des quintes commencé à 22-3. Mais on a préféré ne pas le faire figurer pour éviter un effet de résolution arrivant trop tôt dans la composition et également pour jouer de la fondamentale commune entre le V de do (G7) et le ii de fa (Gm7). Dans cette interprétation, on a donc deux phrases : 1. Un modèle cycle des quintes en do de 22-3 à 23-4 ; un modèle cycle des quintes en fa de 24-1 à 26-4.
+Cugny p.66   accord éclaté
+              %}
+
+       f:maj7	bes:7 | %m28  %% modulation virtuelle p. 49.
+       e:m7		a:7.9- | %m29
+        d:m7		g:7.9-| %m30
+        c1:6
+
+
+       }
+
+
+
+
+     }
+
+}
+
+
+anatoleUp =
+{
+  b''2 c |
+  c b    |  %%%don't touch this
+
+  }
+
+
+ anatoleMid =
+ {
+  e'2 g |
+  f	f |  % don't add to this.
+
+
+}
+
+soprano = \relative c  {
+
+  \global
+  \clef"treble"
+  \partial 2 r2 |
+
+  \repeat unfold 2 {
+
+  \repeat unfold 2 { \anatoleUp }
+
+  b2 c 	| %m5
+  d c 		| %m6
+  c1 		| %m7
+  b2  b2		|  %8
+
+
+  } %A section ends here.
+
+  \alternative{
+
+
+  \volta 1   {
+    c2 c	 | % m9 ré double bémol nommé do
+    c 	b	|  %m10
+    c 	c  	| %m11
+    b2 b4 a  | %m12
+    d2  des | %m13
+    c    c	| % %m14
+    c1 	| %m15
+    b		| %m16
+      }
+
+  \volta 2 {
+
+  c2 c	| %m25
+  c  b		| %m26
+  bes  bes	| %m27
+  a 	aes	| %m28
+  g 	g	| %m29
+  f 	f	| %m30
+  e1		| %m31
+  R1		| %m32
+
+
+       }
+
+    }
+
+}
+
+
+
+  alto = \relative c {
+ \global
+ \clef"treble"
+ \partial 2 r2
+
+ \repeat unfold 2 {
+
+   \repeat unfold 2 { \anatoleMid }
+
+   e2 f | %m5
+   g2 g | %m6
+   \redCircle g1  | %m7
+    g2   g2		|
+
+
+     } %end of A section
+
+
+   \alternative{
+
+   \volta 1 {
+
+      g ges      | %m9
+      f   f	   | %m10
+      g  fis	   | %m11
+      e  e4 fis | %m12
+      g2 g	|  %m13 second g is really a la double bémol
+      g2  fis	| %m14
+      g1	| %m15
+      f1 	| %m16
+
+      }
+
+    \volta 2 {
+
+      g2  ges   | %m25
+      f 		f  | %m26
+      f		e | %m27
+      e 	d | %m28
+      d 	cis | %m29
+      c!2 	b  | %m30
+      a1	| %m31
+      R1	| %m32
+
+           }
+
+      }
+
+  }
+
+
+
+bassLine = \relative c {
+  \global
+  \clef "bass"
+  \partial 2 r2 |
+  \repeat unfold 2 {
+    % A section (mm. 1-8)
+    c2  a2   |    % m1:  Cmaj7  Am7
+    d2  g2   |    % m2:  Dm7    G7
+    c,2 a2   |    % m3:  Cmaj7  Am7
+    d2  g2   |    % m4:  Dm7    G7
+    c,2 d2   |    % m5:  Cmaj7  Dm7
+    e2  a2   |    % m6:  Em7    Am7
+    d,1      |    % m7:  Dm11
+    g2  f2   |    % m8:  G7     G7/F (slash → F bass)
+    \alternative {
+      \volta 1 {
+        % B section (mm. 9-16)
+        e2  ees2       |    % m9:  C6/E (slash → E bass)  Edim7
+        d2  g2       |    % m10: Dm7    G7
+        a2  d,2      |    % m11: Am7    D7b9
+        g2  cis,4 c4 |    % m12: G6  C#m7b5  D/C (slash → C bass)
+        b2  bes2     |    % m13: G/B (slash → B bass)  Bbdim7
+        a2  d2       |    % m14: Am7    D7b9
+        d1           |    % m15: Dm11
+        g,1          |    % m16: G7b9 — G2, anchors second-pass A to start on C3
+      }
+      \volta 2 {
+        % C section (mm. 25-32)
+        e'2  ees2   |    % m25: C6/E (slash → E bass)  Edim7
+        d2  g2   |    % m26: Dm7    G7
+        g2  c,2  |    % m27: Gm7    C7
+        f2  bes2 |    % m28: Fmaj7  Bb7
+        e,2 a2   |    % m29: Em7    A7b9
+        d,2 g2   |    % m30: Dm7    G7b9
+        c,1      |    % m31: C6
+        R1 \bar "|."  % m32
+      }
+    }
+  }
+}
+
+
+
+%%% Roman numeral analysis (attached to phrasing voice)
+%%% \rN retained only where special notation is used (o, h, f-prefix, concat)
+%%% Boxes: \degreeBox #red { I }  #blue "V"  #(x11-color 'green4) "IV"  #(x11-color 'orange) "iii"
+%%% Trump rule: when advancedAnalysis or analysisSol is active at a position,
+%%%   only box within those variables — see m11-12 (V) and m27-28 (IV) below
+analysis = \lyricmode {
+  \override LyricText.self-alignment-X = #-0.6
+  \set stanza = \markup \rounded-box \concat{ { \italic "do" "  : " } }
+
+  %% A section (mm. 1-8) — appears twice (unfold 2 in other voices)
+  %anacrusis
+  \skip 2 |
+  \markup \degreeBox #red { I }  \markup { vi }  |
+  \markup { ii }  \markup \degreeBox #blue { V }  | %m1-2
+  \markup \degreeBox #red { I }  \markup { vi }  \markup { ii }  \markup \degreeBox #blue { V }  | %m3-4
+  \markup \degreeBox #red { I }  \markup { ii }  \markup \degreeBox #(x11-color 'orange) { iii }  \markup { vi }  | %m5-6
+  \markup { ii }  \skip 2  \markup \degreeBox #blue { V }  \skip 2  | %m7-8
+
+  %% B section (mm. 9-16)
+  \markup \degreeBox #red { I }
+
+  \advancedAnalysis
+  {  \markup \bold { IIx }
+  }
+  {
+    \markup \rN { fiii o }
+  }
+ 
+ \markup { ii }  \markup \degreeBox #blue { V }  | %m9-10
+
+  \markup \degreeBox #(x11-color 'orange) { vi }  \markup { IIx } %% substitution harmonique  %% probably box this
+  \advancedAnalysis
+  { %% advanced (sol context) — analysisSol boxes the V here, so omit V box
+    \set stanza = \markup \rounded-box { \concat { \italic "sol" " :" } }
+    \markup \degreeBox #red { I }
+    \markup \bold { IIx } % substitution harmonique
+    \markup "V"
+  }
+  { %% plain — analysisSol not shown, so box V here
+    \markup \degreeBox #blue { V }
+    \markup \rN { si h }
+    \markup { IIx } % substitution harmonique
+  } %m11-12
+
+  %m11-12: vi(=ii/G) V7/G | I in G
+  \advancedAnalysis {
+    \markup \degreeBox #red { I }  \markup \bold { IIx }  \markup { ii }  \markup \degreeBox #blue { V }  | %m13-14
+    \markup { vm }  \skip 2
+  }
+  {
+    \markup \degreeBox #blue { V }  \markup \rN { fvii o }  \markup { vi }  \markup { IIx }  | %m13-14 % substitution harmonique pp. 42-43 cours harmonie EAD %%% c'est l'infrastructure de l'accord qui change
+    \markup { ii }  \skip 2  | %m15
+  }
+   \advancedAnalysis{ \set stanza = \markup \rounded-box { \concat { \italic "do" " :" } }}
+       { }
+  \markup \degreeBox #blue { V }  \skip 2 | %anacrusis (return to A)
+  \markup \degreeBox #red { I }  \markup { vi }  |
+  \markup { ii }  \markup \degreeBox #blue { V }  | %m1-2
+  \markup \degreeBox #red { I }  \markup { vi }  \markup { ii }  \markup \degreeBox #blue { V }  | %m3-4
+  \markup \degreeBox #red { I }  \markup { ii }  \markup \degreeBox #(x11-color 'orange) { iii }  \markup { vi }  | %m5-6
+  \markup { ii }  \skip 2  \markup \degreeBox #blue { V }  \skip 2  | %m7-8
+
+  %% C section (mm. 25-32)
+  \markup \degreeBox #red { I }
+  \advancedAnalysis { \markup \bold { IIx } } %sub harmonique
+  { \markup \rN { iii o } }
+  \markup { ii }  \markup \degreeBox #blue { V }  | %m25-26
+
+  %% m27-28: analysisSol (fa context) is active here when advanced is on
+  %%   → box IV only when analysisSol is NOT showing (plain mode)
+  \advancedAnalysis
+  { \markup { vm }  \markup { Ix }  \markup \degreeBox #green { IV }  \markup \concat { \rN { fVII} "x" }  | } %sub harmonique %% voir cours  : c'est une variation sur la forme coda de Julien Falk voir  p. 50 l'accord Bb7 agit de la même manière de prolonger  la conduite des voix vers Em7
+  { \markup { vm }  \markup { Ix }  \markup \degreeBox #(x11-color 'green4) { IV }  \markup \concat { \rN { fVI } "x" }  | } %m27-28     % sub harmonique
+
+  \markup \degreeBox #(x11-color 'orange) { iii }  \markup { VIx }  \markup { ii }  \markup \degreeBox #blue { V }  | %m29-30 %sub harmonique
+  \markup \degreeBox #red { I }  \skip 2  | %m31-32
+}
+
+
+%%% Secondary analysis line — modulation to sol (G major) at m11
+%%% Skips 21 half-notes (= pickup + m1–10) then shows ii V I in G
+%%% Trump rule: V at m11 and V/I at m27-28 (fa) are boxed HERE, not in analysis
+analysisSol = \lyricmode {
+   % \override LyricText.color = #(x11-color 'orange)
+    \override LyricText.font-series = #'bold
+    \override LyricText.self-alignment-X = #-0.6
+  \skip 2
+  \repeat unfold 19 \skip 2   %% advance to m9
+
+\skip 2
+
+  \set stanza = \markup \rounded-box { \concat { \italic "sol" " :" } }
+  \markup {ii}\markup \degreeBox #blue { V }   %% m11: V of G — boxed here, not in analysis
+\skip
+  \repeat unfold 4 \skip 2
+
+  \repeat unfold 6 \skip 2 %% this spacer not working
+  \set stanza = \markup \rounded-box { \concat { \italic "do" " :" } }
+  \markup { ii }
+  \repeat unfold 23 \skip 2   %% advance to m27
+
+  \set stanza = \markup \rounded-box { \concat { \italic "fa" " :" } }
+  \markup { ii }  \markup \degreeBox #blue { V }  \markup \degreeBox #red { I }  \markup \degreeBox #green { IVx }
+  %% m27-28: V and I boxed here; analysis m27-28 IV box suppressed (trump rule)
+}
