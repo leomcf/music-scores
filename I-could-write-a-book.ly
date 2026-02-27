@@ -2,7 +2,7 @@
 
 \include "roman_numeral_analysis_tool.ily"
 
-showAnalysisAdvanced = ##t
+showAnalysisAdvanced = ##f
 
 
 
@@ -19,7 +19,8 @@ showAnalysisAdvanced = ##t
 % Toggle variables for different analysis layers
 showAnalysisOne = ##t  % First layer: notes against basic blues
 showAnalysisTwo = ##t  % Second layer: notes against alternate changes
-showDegreeBoxes = ##t% Colored boxes: I/i=red  V=blue  IV=green  iii=orange
+showDegreeBoxes = ##f% Colored boxes: I/i=red  V=blue  IV=green  iii=orange
+showHarmonicSlurs = ##f  % ##t = dotted slurs (phrasingHarmonic); ##f = no slurs (phrasingHarmonicStageOne)
 
 
 
@@ -217,14 +218,14 @@ phrasingHarmonic = {
   c4)( c c c | %m3
   c4 c c c | %m4
   c4)( c c c | %m5
-  c4 c c c | %m6
-  c4)( c c c | %m7
+  c4)( c c c | %m6
+  c4 c c c | %m7
   c4 c c c | %m8
   c4)( c c c | %m9
-  c4 c c) c | %m10
-  c4( c c c | %m11
-  c4) c c c | %m12
-  c4( c c c | %m13
+  c4 c c c | %m10
+  c4)( c c c | %m11
+  c4)( c c c | %m12
+  c4)( c c c | %m13
   c4 c c c | %m14
   c4)( c c c | %m15
   c4 c c c | %m16
@@ -233,23 +234,61 @@ phrasingHarmonic = {
   c4)( c c c | %m19
   c4 c c c | %m20
   c4)( c c c | %m21
-  c4 c c c | %m22
-  c4)( c c c | %m23
+  c4)( c c c | %m22
+  c4 c c c | %m23
   c4 c c c | %m24
   c4)( c c c | %m25
-  c4 c c) c | %m26
-  c4( c c c | %m27
-  c4) c c( c | %m28
-  c4 c c c | %m29
+  c4 c c c | %m26
+  c4)( c c c | %m27
+  c4 c c) c | %m28
+  c4( c c c | %m29
   c4 c c c | %m30
   c4) \stopPat s2. | %m31
   s1 | %m32  \bar ".|"
-  
+
 }
 
 
+% Stage-one version: same harmonic rhythm pattern without slurs
+phrasingHarmonicStageOne = {
+  \startPat
+  \partial 2 c4 c |
+  c4 c c c | %m1
+  c4 c c c | %m2
+  c4 c c c | %m3
+  c4 c c c | %m4
+  c4 c c c | %m5
+  c4 c c c | %m6
+  c4 c c c | %m7
+  c4 c c c | %m8
+  c4 c c c | %m9
+  c4 c c c | %m10
+  c4 c c c | %m11
+  c4 c c c | %m12
+  c4 c c c | %m13
+  c4 c c c | %m14
+  c4 c c c | %m15
+  c4 c c c | %m16
+  c4 c c c | %m17
+  c4 c c c | %m18
+  c4 c c c | %m19
+  c4 c c c | %m20
+  c4 c c c | %m21
+  c4 c c c | %m22
+  c4 c c c | %m23
+  c4 c c c | %m24
+  c4 c c c | %m25
+  c4 c c c | %m26
+  c4 c c c | %m27
+  c4 c c c | %m28
+  c4 c c c | %m29
+  c4 c c c | %m30
+  c4 \stopPat s2. | %m31
+  s1 | %m32  \bar ".|"
+}
 
-
+% Points to the slur or no-slur version depending on showHarmonicSlurs
+activePhrasing = #(if showHarmonicSlurs phrasingHarmonic phrasingHarmonicStageOne)
 
 
 harmonicR = {
@@ -283,10 +322,10 @@ mainChords = \chordmode {
          c2:6/e  ees:dim7 | %m9  
          d:m7  	g:7 	| %m10
          a:m7 	d:7.9- | %m11
-         g:6		cis4:m7.5-  d/c	| %m12
-         g2/b  	bes:dim7 | %m13
+         g:6		cis4:m7.5-  d/c	| %m12 %like an A9 
+         g2/b  	bes:dim7 | %m13  % could be: substitution par supression de fondamentale d'un accord altéré p.48 
          a:m7 	d:7.9-	| %m14
-         d1:m11 	| %m15   p.43  (also measure 26-27 below) « Il faut enfin ajouter qu'il arrive que le substitué subsiste à côté du substitut, par exemple dans l'exemple suivant : Am7 - D7 - Dm7 - G7 - C. Le substitué Dm7 reste après son substitut harmonique (D7). Dans ce cas, cela permet de conserver une carrure régulière si le rythme harmonique est de deux accords par mesure. »
+         d1:m11 	| %m15   p.43  (also measure 26-27 below)  « Il faut enfin ajouter qu'il arrive que le substitué subsiste à côté du substitut, par exemple dans l'exemple suivant : Am7 - D7 - Dm7 - G7 - C. Le substitué Dm7 reste après son substitut harmonique (D7). Dans ce cas, cela permet de conserver une carrure régulière si le rythme harmonique est de deux accords par mesure. »
          g:7.9- 	| %m16
                   
        }
@@ -294,8 +333,15 @@ mainChords = \chordmode {
        \volta 2 {
             c2:6/e  ees:dim7 | %m25
          d2:m7 	g:7 	| %m26
-         g:m7 	c:7 	| %m27    %%p43  « Il faut enfin ajouter qu'il arrive que le substitué subsiste à côté du substitut, par exemple dans l'exemple suivant : Am7 - D7 - Dm7 - G7 - C. Le substitué Dm7 reste après son substitut harmonique (D7). Dans ce cas, cela permet de conserver une carrure régulière si le rythme harmonique est de deux accords par mesure. »
-        e:m7		a:7.9- | %m29
+         g:m7 	c:7 	| %m27    %%p43  « Il faut enfin ajouter qu'il arrive que le substitué subsiste à côté du substitut, par exemple dans l'exemple suivant : Am7 - D7 - Dm7 - G7 - C. Le substitué Dm7 reste après son substitut harmonique (D7). Dans ce cas, cela permet de conserver une carrure régulière si le rythme harmonique est de deux accords par mesure. » ALSO 
+           %{
+21-1 à 25-2 : deux degrés V dans la même phrase
+L'interprétation qui me paraît la plus viable est que, à 24-1, le degré l en do majeur aurait dû être présent, en conclusion d'un modèle cycle des quintes commencé à 22-3. Mais on a préféré ne pas le faire figurer pour éviter un effet de résolution arrivant trop tôt dans la composition et également pour jouer de la fondamentale commune entre le V de do (G7) et le ii de fa (Gm7). Dans cette interprétation, on a donc deux phrases : 1. Un modèle cycle des quintes en do de 22-3 à 23-4 ; un modèle cycle des quintes en fa de 24-1 à 26-4. 
+Cugny p.66   accord éclaté 
+              %}
+                       
+       f:maj7	bes:7 | %m28  %% modulation virtuelle p. 49.        
+       e:m7		a:7.9- | %m29
         d:m7		g:7.9-| %m30
         c1:6			
          
@@ -498,7 +544,7 @@ analysis = \lyricmode {
   { \markup \rN { fiii o } }
   \markup { ii }  \markup \degreeBox #blue { V }  | %m9-10
 
-  \markup { vi }  \markup { IIx } %% substitution harmonique 
+  \markup \degreeBox #(x11-color 'orange) { vi }  \markup { IIx } %% substitution harmonique  %% probably box this
   \advancedAnalysis
   { %% advanced (sol context) — analysisSol boxes the V here, so omit V box
     \set stanza = \markup \rounded-box { \concat { \italic "sol" " :" } }
@@ -514,14 +560,15 @@ analysis = \lyricmode {
 
   %m11-12: vi(=ii/G) V7/G | I in G
   \advancedAnalysis {
-    \markup \degreeBox #red { I }  \markup \rN { fvii o }  \markup { ii }  \markup \degreeBox #blue { V }  | %m13-14
+    \markup \degreeBox #red { I }  \markup \rN { fiii o }  \markup { ii }  \markup \degreeBox #blue { V }  | %m13-14
     \markup { vm }  \skip 2
   }
   {
     \markup \degreeBox #blue { V }  \markup \rN { fvii o }  \markup { vi }  \markup { IIx }  | %m13-14 % substitution harmonique pp. 42-43 cours harmonie EAD %%% c'est l'infrastructure de l'accord qui change
     \markup { ii }  \skip 2  | %m15
   }
-    \set stanza = \markup \rounded-box { \concat { \italic "do" " :" } }
+   \advancedAnalysis{ \set stanza = \markup \rounded-box { \concat { \italic "do" " :" } }}
+       { }
   \markup \degreeBox #blue { V }  \skip 2 | %anacrusis (return to A)
   \markup \degreeBox #red { I }  \markup { vi }  |
   \markup { ii }  \markup \degreeBox #blue { V }  | %m1-2
@@ -538,7 +585,7 @@ analysis = \lyricmode {
   %% m27-28: analysisSol (fa context) is active here when advanced is on
   %%   → box IV only when analysisSol is NOT showing (plain mode)
   \advancedAnalysis
-  { \markup { vm }  \markup { Ix }  \markup \degreeBox #green { IV }  \markup \concat { \rN { fVI } "x" }  | } %sub harmonique
+  { \markup { vm }  \markup { Ix }  \markup \degreeBox #green { IV }  \markup \concat { \rN { fVII} "x" }  | } %sub harmonique %% voir cours  : c'est une variation sur la forme coda de Julien Falk voir  p. 50 l'accord Bb7 agit de la même manière de prolonger  la conduite des voix vers Em7
   { \markup { vm }  \markup { Ix }  \markup \degreeBox #(x11-color 'green4) { IV }  \markup \concat { \rN { fVI } "x" }  | } %m27-28     % sub harmonique
 
   \markup \degreeBox #(x11-color 'orange) { iii }  \markup { VIx }  \markup { ii }  \markup \degreeBox #blue { V }  | %m29-30 %sub harmonique 
@@ -780,12 +827,6 @@ analysisSol = \lyricmode {
 
 
 
-  \layout {
-%       \Score
-%     \override StaffGrouper.staff-staff-spacing.padding = #250
-%     \override StaffGrouper.staff-staff-spacing.basic-distance = #250
-  
-  }
 
 
 \score {
@@ -820,7 +861,7 @@ s1 * 4   % bar 29–32, no break
     %       \omit Stem
 %           \omit Beam
 %           \omit Flag
-        } \phrasingHarmonic
+        } \activePhrasing
 
         \new Voice = "harmonicR" \with {
           \omit NoteHead
@@ -859,6 +900,12 @@ s1 * 4   % bar 29–32, no break
   >>
   
   
+  \layout {
+      \Score
+    \override StaffGrouper.staff-staff-spacing.padding = #10
+    \override StaffGrouper.staff-staff-spacing.basic-distance = #10
+  
+  }
 
   \midi {}
 }
