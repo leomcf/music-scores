@@ -286,7 +286,7 @@ mainChords = \chordmode {
          g:6		cis4:m7.5-  d/c	| %m12
          g2/b  	bes:dim7 | %m13
          a:m7 	d:7.9-	| %m14
-         d1:m11 	| %m15
+         d1:m11 	| %m15   p.43  (also measure 26-27 below) « Il faut enfin ajouter qu'il arrive que le substitué subsiste à côté du substitut, par exemple dans l'exemple suivant : Am7 - D7 - Dm7 - G7 - C. Le substitué Dm7 reste après son substitut harmonique (D7). Dans ce cas, cela permet de conserver une carrure régulière si le rythme harmonique est de deux accords par mesure. »
          g:7.9- 	| %m16
                   
        }
@@ -294,8 +294,7 @@ mainChords = \chordmode {
        \volta 2 {
             c2:6/e  ees:dim7 | %m25
          d2:m7 	g:7 	| %m26
-         g:m7 	c:7 	| %m27
-        f:maj7	bes:7 | %m28
+         g:m7 	c:7 	| %m27    %%p43  « Il faut enfin ajouter qu'il arrive que le substitué subsiste à côté du substitut, par exemple dans l'exemple suivant : Am7 - D7 - Dm7 - G7 - C. Le substitué Dm7 reste après son substitut harmonique (D7). Dans ce cas, cela permet de conserver une carrure régulière si le rythme harmonique est de deux accords par mesure. »
         e:m7		a:7.9- | %m29
         d:m7		g:7.9-| %m30
         c1:6			
@@ -499,18 +498,18 @@ analysis = \lyricmode {
   { \markup \rN { fiii o } }
   \markup { ii }  \markup \degreeBox #blue { V }  | %m9-10
 
-  \markup { vi }  \markup { IIx }
+  \markup { vi }  \markup { IIx } %% substitution harmonique 
   \advancedAnalysis
   { %% advanced (sol context) — analysisSol boxes the V here, so omit V box
     \set stanza = \markup \rounded-box { \concat { \italic "sol" " :" } }
     \markup \degreeBox #red { I }
-    \markup { IIx }
+    \markup { IIx } % substitution harmonique
     \markup "V"
   }
   { %% plain — analysisSol not shown, so box V here
     \markup \degreeBox #blue { V }
     \markup \rN { si h }
-    \markup { IIx }
+    \markup { IIx } % substitution harmonique
   } %m11-12
 
   %m11-12: vi(=ii/G) V7/G | I in G
@@ -519,7 +518,7 @@ analysis = \lyricmode {
     \markup { vm }  \skip 2
   }
   {
-    \markup \degreeBox #blue { V }  \markup \rN { fvii o }  \markup { vi }  \markup { IIx }  | %m13-14
+    \markup \degreeBox #blue { V }  \markup \rN { fvii o }  \markup { vi }  \markup { IIx }  | %m13-14 % substitution harmonique pp. 42-43 cours harmonie EAD %%% c'est l'infrastructure de l'accord qui change
     \markup { ii }  \skip 2  | %m15
   }
     \set stanza = \markup \rounded-box { \concat { \italic "do" " :" } }
@@ -532,17 +531,17 @@ analysis = \lyricmode {
 
   %% C section (mm. 25-32)
   \markup \degreeBox #red { I }
-  \advancedAnalysis { \markup { VIx } }
+  \advancedAnalysis { \markup { VIx } } %sub harmonique
   { \markup \rN { iii o } }
   \markup { ii }  \markup \degreeBox #blue { V }  | %m25-26
 
   %% m27-28: analysisSol (fa context) is active here when advanced is on
   %%   → box IV only when analysisSol is NOT showing (plain mode)
   \advancedAnalysis
-  { \markup { vm }  \markup { Ix }  \markup \degreeBox #green { IV }  \markup \concat { \rN { fVI } "x" }  | }
-  { \markup { vm }  \markup { Ix }  \markup \degreeBox #(x11-color 'green4) { IV }  \markup \concat { \rN { fVI } "x" }  | } %m27-28
+  { \markup { vm }  \markup { Ix }  \markup \degreeBox #green { IV }  \markup \concat { \rN { fVI } "x" }  | } %sub harmonique
+  { \markup { vm }  \markup { Ix }  \markup \degreeBox #(x11-color 'green4) { IV }  \markup \concat { \rN { fVI } "x" }  | } %m27-28     % sub harmonique
 
-  \markup \degreeBox #(x11-color 'orange) { iii }  \markup { VIx }  \markup { ii }  \markup \degreeBox #blue { V }  | %m29-30
+  \markup \degreeBox #(x11-color 'orange) { iii }  \markup { VIx }  \markup { ii }  \markup \degreeBox #blue { V }  | %m29-30 %sub harmonique 
   \markup \degreeBox #red { I }  \skip 2  | %m31-32
 }
 
@@ -557,10 +556,10 @@ analysisSol = \lyricmode {
   \skip 2
   \repeat unfold 18 \skip 2   %% advance to m9
 
-  \skip 2 \skip 2
+  \skip 2 
 
   \set stanza = \markup \rounded-box { \concat { \italic "sol" " :" } }
-  \markup \degreeBox #blue { V }   %% m11: V of G — boxed here, not in analysis
+  \markup {ii}\markup \degreeBox #blue { V }   %% m11: V of G — boxed here, not in analysis
 \skip
   \repeat unfold 4 \skip 2
 
@@ -722,7 +721,7 @@ analysisSol = \lyricmode {
   
   \paper {
     indent = 20
-  system-system-spacing.basic-distance = 20  % Increased spacing between systems
+  system-system-spacing.basic-distance = 15  % Increased spacing between systems
   score-system-spacing.basic-distance = 25   % Space between title/header and first system
   markup-system-spacing.basic-distance = 18  % Space between text markups and systems
 }
@@ -781,7 +780,12 @@ analysisSol = \lyricmode {
 
 
 
-
+  \layout {
+%       \Score
+%     \override StaffGrouper.staff-staff-spacing.padding = #250
+%     \override StaffGrouper.staff-staff-spacing.basic-distance = #250
+  
+  }
 
 
 \score {
@@ -836,10 +840,13 @@ s1 * 4   % bar 29–32, no break
 %       } \lyricsto "phrasing" { \analysis }
 
     \new StaffGroup \with {
+  
       instrumentName = \markup { \italic "cpt. à 3 voix" }
       shortInstrumentName = "ctp."
+
     } <<
       \new Staff {
+      
         <<
           \new Voice = "upper" { \voiceOne \soprano }
           \new Voice = "mid"   { \voiceTwo \alto }
@@ -852,6 +859,6 @@ s1 * 4   % bar 29–32, no break
   >>
   
   
-  \layout {}
+
   \midi {}
 }
