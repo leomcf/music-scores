@@ -109,7 +109,7 @@ g2 b2  | %1
    c'2 	c 	| %m25
   c4 d2 b4 | %26
  bes2 bes	| %m27
-a2 g4 f | %m28
+a2\stopGroup g4 f | %m28
   e2 e 	| %m29
   d4 c'2 b4  | %30
   c1		| %m31
@@ -325,6 +325,7 @@ anatoleUp =
 
 soprano = \relative c  {
 
+  \override HorizontalBracket.direction = #UP
   \global
   \clef"treble"
   \partial 2 r2 |
@@ -345,8 +346,8 @@ soprano = \relative c  {
 
 
   \volta 1   {
-    c2 c	 | % m9 ré double bémol nommé do
-    c 	b	|  %m10
+    c2\startGroup c	 | % m9 ré double bémol nommé do
+    c 	b\stopGroup	|  %m10
     c 	c  	| %m11
     b2 b4 a  | %m12
     d2  des | %m13
@@ -357,10 +358,10 @@ soprano = \relative c  {
 
   \volta 2 {
 
-  c2 c	| %m25
+  c2\startGroup c	| %m25
   c  b		| %m26
   bes  bes	| %m27
-  a 	aes	| %m28
+  a\stopGroup 	aes	| %m28
   g 	g	| %m29
   f 	f	| %m30
   e1		| %m31
@@ -400,10 +401,10 @@ soprano = \relative c  {
       g ges      | %m9
       f   f	   | %m10
       g  fis	   | %m11
-      e  e4 fis | %m12
+      e  e4 \startGroup  fis | %m12
       g2 g	|  %m13 second g is really a la double bémol
       g2  fis	| %m14
-      g1	| %m15
+      g1 \stopGroup	| %m15
       f1 	| %m16
 
       }
@@ -489,15 +490,8 @@ analysis = \lyricmode {
   \markup { ii }  \skip 2  \markup \degreeBox #blue { V }  \skip 2  | %m7-8
 
   %% B section (mm. 9-16)
-  \markup \degreeBox #red { I }
-
-  \advancedAnalysis
-  {  \markup \bold { IIx }
-  }
-  {
-    \markup \rN { fiii o }
-  }
- 
+  \markup \degreeBox #red { I }     \markup \rN { fiii o }
+   
  \markup { ii }  \markup \degreeBox #blue { V }  | %m9-10
 
   \markup \degreeBox #(x11-color 'orange) { vi }  \markup { IIx } %% substitution harmonique  %% probably box this
@@ -505,7 +499,7 @@ analysis = \lyricmode {
   { %% advanced (sol context) — analysisSol boxes the V here, so omit V box
     \set stanza = \markup \rounded-box { \concat { \italic "sol" " :" } }
     \markup \degreeBox #red { I }
-    \markup \bold { IIx } % substitution harmonique
+    \markup \rN  { siv h } % substitution harmonique
     \markup "V"
   }
   { %% plain — analysisSol not shown, so box V here
@@ -516,7 +510,7 @@ analysis = \lyricmode {
 
   %m11-12: vi(=ii/G) V7/G | I in G
   \advancedAnalysis {
-    \markup \degreeBox #red { I }  \markup \bold { IIx }  \markup { ii }  \markup \degreeBox #blue { V }  | %m13-14
+    \markup \degreeBox #red { I }  \markup \rN { fiii o }  \markup { ii }  \markup \degreeBox #blue { V }  | %m13-14
     \markup { vm }  \skip 2
   }
   {
@@ -534,9 +528,8 @@ analysis = \lyricmode {
 
   %% C section (mm. 25-32)
   \markup \degreeBox #red { I }
-  \advancedAnalysis { \markup \bold { IIx } } %sub harmonique
-  { \markup \rN { iii o } }
-  \markup { ii }  \markup \degreeBox #blue { V }  | %m25-26
+ % \advancedAnalysis { \markup \bold { IIx } } %sub harmonique
+   \markup \rN { iii o }    \markup { ii }  \markup \degreeBox #blue { V }  | %m25-26
 
   %% m27-28: analysisSol (fa context) is active here when advanced is on
   %%   → box IV only when analysisSol is NOT showing (plain mode)
@@ -554,7 +547,7 @@ analysis = \lyricmode {
 %%% Trump rule: V at m11 and V/I at m27-28 (fa) are boxed HERE, not in analysis
 analysisSol = \lyricmode {
    % \override LyricText.color = #(x11-color 'orange)
-    \override LyricText.font-series = #'bold
+   % \override LyricText.font-series = #'bold
     \override LyricText.self-alignment-X = #-0.6
   \skip 2
   \repeat unfold 19 \skip 2   %% advance to m9
@@ -569,9 +562,10 @@ analysisSol = \lyricmode {
   \repeat unfold 6 \skip 2 %% this spacer not working
   \set stanza = \markup \rounded-box { \concat { \italic "do" " :" } }
   \markup { ii }
-  \repeat unfold 23 \skip 2   %% advance to m27
+  \repeat unfold 27 \skip 2   %% advance to m27
 
-  \set stanza = \markup \rounded-box { \concat { \italic "fa" " :" } }
-  \markup { ii }  \markup \degreeBox #blue { V }  \markup \degreeBox #red { I }  \markup \degreeBox #green { IVx }
+%   \set stanza = \markup \rounded-box { \concat { \italic "fa" " :" } }
+%   \markup { ii }  \markup \degreeBox #blue { V }  \markup \degreeBox #red { I }  \markup \degreeBox #green { IVx }
+%   \markup { ii }  \markup \degreeBox #blue { V }  \markup \degreeBox #red { I }  \markup \degreeBox #green { IVx }
   %% m27-28: V and I boxed here; analysis m27-28 IV box suppressed (trump rule)
 }

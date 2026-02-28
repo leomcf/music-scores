@@ -13,8 +13,8 @@ showDegreeBoxes = ##f
 
 \header {
   title = "I Could Write A Book"
-  subtitle = "partition #1"
-  subsubtitle = "Chiffrage harmonique et modulations"
+  subtitle = "partition #2"
+  subsubtitle = "Chiffrage avec modulations"
   composer = "Richard Rodgers"
   arranger = "Lorenz  Hart"
   copyright = "correction de Leo McFadden"

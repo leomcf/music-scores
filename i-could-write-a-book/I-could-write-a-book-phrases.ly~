@@ -6,13 +6,14 @@
 showAnalysisAdvanced = ##t
 showAnalysisOne = ##t
 showAnalysisTwo = ##t
-showDegreeBoxes = ##f
+showDegreeBoxes = ##t
 
 \include "I-could-write-a-book-defs.ily"
 
 
 \header {
   title = "I Could Write A Book"
+  subtitle = "Chiffrage avec modulations"
   composer = "Richard Rodgers"
   arranger = "Lorenz  Hart"
   copyright = "correction de Leo McFadden"
@@ -72,20 +73,7 @@ showDegreeBoxes = ##f
     
     { }
 
-    \new StaffGroup \with {
-      instrumentName = \markup { \italic "cpt. à 3 voix" }
-      shortInstrumentName = "ctp."
-    } <<
-      \new Staff {
-        <<
-          \new Voice = "upper" { \voiceOne \soprano }
-          \new Voice = "mid"   { \voiceTwo \alto }
-        >>
-      }
-      \new Staff {
-        \bassLine
-      }
-    >>
+ 
   >>
 
   \layout {

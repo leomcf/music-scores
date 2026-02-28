@@ -3,7 +3,7 @@
 %%% Full score: dotted harmonic slurs + contrepoint à 3 voix + advanced analysis
 %%% For the stripped-down stage-one view, compile I-could-write-a-book-stage1.ly
 
-showAnalysisAdvanced = ##t
+showAnalysisAdvanced = ##f
 showAnalysisOne = ##t
 showAnalysisTwo = ##t
 showDegreeBoxes = ##f
@@ -13,8 +13,8 @@ showDegreeBoxes = ##f
 
 \header {
   title = "I Could Write A Book"
-  subtitle = "partition #1"
-  subsubtitle = "Chiffrage harmonique et modulations"
+  subtitle = "partition #4"
+  subsubtitle = "contrepoint à trois voix"
   composer = "Richard Rodgers"
   arranger = "Lorenz  Hart"
   copyright = "correction de Leo McFadden"
@@ -23,9 +23,9 @@ showDegreeBoxes = ##f
 
 \paper {
   indent = 20
-  system-system-spacing.basic-distance = 15
-  score-system-spacing.basic-distance = 25
-  markup-system-spacing.basic-distance = 18
+  system-system-spacing.basic-distance = 23
+  score-system-spacing.basic-distance = 30
+  markup-system-spacing.basic-distance = 30
 }
 
 
@@ -50,47 +50,35 @@ showDegreeBoxes = ##f
     }
 
 
-
-
-
-
-
-
-
-
-
-    \new RhythmicStaff {
-      <<
-        \new Voice = "phrasing" \with {
-        %  \omit NoteHead
-        %  \omit Stem
-        %  \omit Beam
-        %  \omit Flag
-        } \phrasingHarmonicStageOne
-
-        \new Voice = "harmonicR" \with {
-          \omit NoteHead
-          \omit Stem
-          \omit Beam
-          \omit Flag
-        } \harmonicR
-      >>
-    }
-
-    \new Lyrics \lyricsto "harmonicR" { \analysis }
-    \advancedAnalysis {
-      \new Lyrics \lyricsto "harmonicR" { \analysisSol }
-    } 
     
     { }
 
- 
+    \new StaffGroup \with {
+      instrumentName = \markup { \italic "cpt. à 3 voix" }
+      shortInstrumentName = "ctp."
+    } <<
+      \new Staff {
+        <<
+          \new Voice = "upper" { \voiceOne \soprano }
+          \new Voice = "mid"   { \voiceTwo \alto }
+        >>
+      }
+      \new Staff {
+        \bassLine
+      }
+    >>
   >>
 
   \layout {
     \Score
     \override StaffGrouper.staff-staff-spacing.padding = #10
     \override StaffGrouper.staff-staff-spacing.basic-distance = #10
+    \context {
+      \Voice
+      \consists "Horizontal_bracket_engraver"
+      \override HorizontalBracket.thickness = #3
+      \override HorizontalBracket.color = #red
+    }
   }
 
   \midi {}

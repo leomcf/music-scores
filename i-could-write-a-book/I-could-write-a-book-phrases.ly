@@ -6,14 +6,15 @@
 showAnalysisAdvanced = ##t
 showAnalysisOne = ##t
 showAnalysisTwo = ##t
-showDegreeBoxes = ##f
+showDegreeBoxes = ##t
 
 \include "I-could-write-a-book-defs.ily"
 
 
 \header {
   title = "I Could Write A Book"
-  subtitle = "Chiffrage avec modulations"
+  subtitle = "partition #2"
+  subsubtitle = "phrasé harmonique"
   composer = "Richard Rodgers"
   arranger = "Lorenz  Hart"
   copyright = "correction de Leo McFadden"
