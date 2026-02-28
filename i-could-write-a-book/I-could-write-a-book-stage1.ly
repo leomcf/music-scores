@@ -1,0 +1,75 @@
+\version "2.24.1"
+
+%%% Stage 1: melody + chord names + plain harmonic rhythm (no slurs)
+%%% Basic roman-numeral analysis only — no advanced substitution layer,
+%%% no degree boxes, no contrepoint à 3 voix.
+
+showAnalysisAdvanced = ##f
+showAnalysisOne = ##t
+showAnalysisTwo = ##t
+showDegreeBoxes = ##f
+
+\include "I-could-write-a-book-defs.ily"
+
+
+\header {
+  title = "I Could Write A Book"
+  subtitle = "Partition #1"
+  subsubtitle = "Chiffrage dans une seule tonalité"
+  composer = "Richard Rodgers"
+  arranger = "Lorenz  Hart"
+  copyright = "correction de Leo McFadden"
+}
+
+
+\paper {
+  indent = 20
+  system-system-spacing.basic-distance = 15
+  score-system-spacing.basic-distance = 25
+  markup-system-spacing.basic-distance = 18
+}
+
+
+\score {
+  <<
+    \new Staff = "treble" {
+      <<
+        \melody
+        \new Voice {
+          \partial 2 s2
+          s1 * 4 \break
+          s1 * 4 \break
+          s1 * 4 \break
+          \repeat unfold 4 { s1 * 4 \break }
+          s1 * 4   % bar 29–32, no break
+        }
+      >>
+    }
+
+    \new ChordNames {
+      \mainChords
+    }
+
+    \new RhythmicStaff {
+      <<
+        \new Voice = "phrasing" \phrasingHarmonicStageOne
+
+        \new Voice = "harmonicR" \with {
+          \omit NoteHead
+          \omit Stem
+          \omit Beam
+          \omit Flag
+        } \harmonicR
+      >>
+    }
+
+    \new Lyrics \lyricsto "harmonicR" { \analysis }
+
+  >>
+
+  \layout {
+    \Score
+  }
+
+  \midi {}
+}

@@ -1,0 +1,85 @@
+\version "2.24.1"
+
+%%% Full score: dotted harmonic slurs + contrepoint à 3 voix + advanced analysis
+%%% For the stripped-down stage-one view, compile I-could-write-a-book-stage1.ly
+
+showAnalysisAdvanced = ##f
+showAnalysisOne = ##t
+showAnalysisTwo = ##t
+showDegreeBoxes = ##f
+
+\include "I-could-write-a-book-defs.ily"
+
+
+\header {
+  title = "I Could Write A Book"
+  subtitle = "partition #3"
+  subsubtitle = "contrepoint à trois voix"
+  composer = "Richard Rodgers"
+  arranger = "Lorenz  Hart"
+  copyright = "correction de Leo McFadden"
+}
+
+
+\paper {
+  indent = 20
+  system-system-spacing.basic-distance = 23
+  score-system-spacing.basic-distance = 30
+  markup-system-spacing.basic-distance = 30
+}
+
+
+\score {
+  <<
+    \new Staff = "treble" {
+      <<
+        \melody
+        \new Voice {
+          \partial 2 s2
+          s1 * 4 \break
+          s1 * 4 \break
+          s1 * 4 \break
+          \repeat unfold 4 { s1 * 4 \break }
+          s1 * 4   % bar 29–32, no break
+        }
+      >>
+    }
+
+    \new ChordNames {
+      \mainChords
+    }
+
+
+    
+    { }
+
+    \new StaffGroup \with {
+      instrumentName = \markup { \italic "cpt. à 3 voix" }
+      shortInstrumentName = "ctp."
+    } <<
+      \new Staff {
+        <<
+          \new Voice = "upper" { \voiceOne \soprano }
+          \new Voice = "mid"   { \voiceTwo \alto }
+        >>
+      }
+      \new Staff {
+        \bassLine
+      }
+    >>
+  >>
+
+  \layout {
+    \Score
+    \override StaffGrouper.staff-staff-spacing.padding = #10
+    \override StaffGrouper.staff-staff-spacing.basic-distance = #10
+    \context {
+      \Voice
+      \consists "Horizontal_bracket_engraver"
+      \override HorizontalBracket.thickness = #3
+      \override HorizontalBracket.color = #red
+    }
+  }
+
+  \midi {}
+}
