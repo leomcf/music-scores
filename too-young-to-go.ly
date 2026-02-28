@@ -6,8 +6,8 @@
 
 % Toggle variables for different analysis layers 
 showAnalysisOne = ##t  % First layer: notes against basic blues
-showAnalysisTwo = ##f   % Second layer: notes against alternate changes
-showAnalysisThree = ##f
+showAnalysisTwo = ##t % Second layer: notes against alternate changes
+showAnalysisPlain = ##f
 
 
 % First layer: red circles (notes that don't seem to belong to the written changes)
@@ -45,11 +45,12 @@ asteriskOne =
 
 \header {
  
-     #{
+     
        
   title = "Too Young to Go Steady"
-  subtitle =  #(if showAnalysisOne  "étapes 1 et 2") 
-   subtitle =  #(if showAnalysisTwo  "étapes 3 et 4") 
+  instrument =  #(if showAnalysisPlain  "étapes 1 et 2") 
+%  subtitle =  #(if showAnalysisOne  "étape 3") 
+   subsubtitle =  #(if showAnalysisTwo  "étapes 3 et 4") 
     %instrument = \markup { "de l'album" \italic "This Time It's Love"}
   composer = "Jimmy McHugh"
   arranger = "Harold Adamson"
